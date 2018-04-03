@@ -2,7 +2,8 @@ import Vue from 'vue/dist/vue';
 import VueRouter from 'vue-router';
 import App from './App';
 import 'mint-ui/lib/style.min.css';
-import MintUI from 'mint-ui';
+const VueTouch = require('vue-touch');
+// import MintUI from 'mint-ui';
 /**
  * vue-navigation  导航默认行为类似手机APP的页面导航
  * https://github.com/zack24q/vue-navigation/blob/master/README_CN.md
@@ -13,8 +14,9 @@ require('babel-polyfill');
 import routerCfg from './router';
 import routerGuard from './router/guard';
 
-Vue.use(MintUI);
+// Vue.use(MintUI);
 Vue.use(VueRouter);
+Vue.use(VueTouch, {name: 'v-touch'});
 
 let router = new VueRouter({
     routes: routerCfg
