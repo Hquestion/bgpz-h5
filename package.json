@@ -1,6 +1,6 @@
 {
   "name": "parcel-vue-template",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -9,7 +9,7 @@
     "build": "parcel build index.html",
     "patch": "node mint-ui.patch.js"
   },
-  "author": "",
+  "author": "hquestion",
   "license": "ISC",
   "dependencies": {
     "babel-polyfill": "^6.26.0",
