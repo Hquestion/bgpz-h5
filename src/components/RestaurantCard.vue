@@ -21,9 +21,9 @@
         <div class="card-footer">
             <div>已服务<span v-text="data.serviceCount"></span>次</div>
             <div>您周边5公里范围内有<span v-text="data.likeCount"></span>人喜欢</div>
-            <div class="btn btn-radius">
+            <v-touch class="btn btn-radius" @tap="startOrdering">
                 <div class="btn-block">开始点餐</div>
-            </div>
+            </v-touch>
         </div>
     </div>
 </template>
@@ -37,6 +37,13 @@
         },
         components: {
             LengendCard
+        },
+        methods: {
+            startOrdering() {
+                this.$router.push({
+                    name: 'FoodCart'
+                })
+            }
         }
     }
 </script>
@@ -120,12 +127,12 @@
         .btn {
             position: absolute;
             left: 50%;
-            bottom: -2.5rem;
+            bottom: -2.2rem;
             transform: translate3d(-50%, 0, 0);
-            width: 5rem;
-            height: 5rem;
+            width: 4.4rem;
+            height: 4.4rem;
             background: #fff;
-            border-radius: 5rem;
+            border-radius: 4.4rem;
             color: red;
             box-shadow: 0 0 6px 1px #e88;
             display: flex;

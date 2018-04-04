@@ -3,7 +3,7 @@
         <bg-header fixed title="自助点餐"></bg-header>
         <div class="restaurant-swiper-container">
             <div class="swiper-tip">← 左右滑动切换酒店 →</div>
-            <swiper :options="swiperOption" class="swiper-block">
+            <swiper :options="swiperOption" class="swiper-block" ref="restaurantSwiper">
                 <swiper-slide v-for="(restaurant, index) in restaurantData" :key="index">
                     <restaurant-card :data="restaurant">
                         <div slot="content">
@@ -36,6 +36,7 @@
                     slidesPerView: 'auto',
                     centeredSlides: true,
                     spaceBetween: 0,
+                    setWrapperSize: true,
                     pagination: {
                         el: '.swiper-pagination',
                         clickable: true
@@ -79,6 +80,18 @@
                 }]
             };
         }
+        // ,
+        // beforeRouteLeave (to, from, next){
+        //     try{
+        //         this.$refs.restaurantSwiper.swiper.destroy(true);
+        //     }catch (e){}
+        //     next();
+        // },
+        // beforeRouteEnter(to, from, next){
+        //     next(vm => {
+        //         vm.$refs.restaurantSwiper.swiper.init();
+        //     })
+        // }
     }
 </script>
 
@@ -94,17 +107,17 @@
         background: #fff;
     }
     .swiper-tip {
-        height: 3rem;
+        height: 2.5rem;
         line-height: 3rem;
         text-align: center;
         font-size: 0.8rem;
         color: #aaa;
     }
     .swiper-block {
-        height: calc(100% - 3rem);
+        height: calc(100% - 2.5rem);
     }
     .swiper-slide {
-        width: 80%;
+        width: 80vw;
         transition: transform ease-in 0.15s;
         opacity: 0.5;
     }
