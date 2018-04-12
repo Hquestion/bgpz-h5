@@ -23,8 +23,14 @@
 </template>
 
 <script>
+    import {TabItem, Tabbar, Button} from 'mint-ui';
     export default {
         name: "frame",
+        components: {
+            MtTabItem: TabItem,
+            MtTabbar: Tabbar,
+            MtButton: Button
+        },
         data(){
             return {
                 msg: 'hello parcel',

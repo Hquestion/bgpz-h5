@@ -41,6 +41,11 @@
             }
         },
         updated(){
+            this.$nextTick(()=>{
+                this.numberVal = this.count;
+            });
+        },
+        mounted(){
             this.numberVal = this.count;
         }
     }

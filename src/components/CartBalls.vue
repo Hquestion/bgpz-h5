@@ -59,11 +59,7 @@
                 clearNode($removeBox);
                 $removeBox.appendChild($cloneImg);
                 return new Promise((resolve, reject) => {
-                    function doResolve(){
-                        resolve();
-                        $removeBox.removeEventListener('transitionend', doResolve);
-                    }
-                    $removeBox.addEventListener('transitionend', doResolve);
+                    setTimeout(resolve, 500);
                 });
             },
             beforeEnter (el) {
@@ -95,7 +91,6 @@
                 let rf = el.offsetHeight // 触发重绘html
                 this.$nextTick(() => {
                     // 让动画效果异步执行,提高性能
-                    console.log(el)
                     el.style.opacity = '0.5';
                     el.style.webkitTransform = 'translate3d(0, 0, 0) scale(0.8)'
                     el.style.transform = 'translate3d(0, 0, 0) scale(0.8)'
@@ -112,6 +107,9 @@
                     ball.show = false;
                     el.style.display = 'none'; // 隐藏小球
                 }
+            },
+            removeBeforeEnter(el){
+
             },
             removeAfterEnter(el) {
                 this.removeShow = false;

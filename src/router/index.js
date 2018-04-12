@@ -8,7 +8,6 @@ import FoodCart from '../pages/FoodCart';
 const routerCfg = [
     {
         path: '/',
-        name: 'Frame',
         component: Frame,
         children: [{
             path: '',

@@ -83,14 +83,15 @@
         // ,
         // beforeRouteLeave (to, from, next){
         //     try{
-        //         this.$refs.restaurantSwiper.swiper.destroy(true);
+        //         // this.$refs.restaurantSwiper.swiper.destroy(true);
+        //         this.swiperOption.centeredSlides = false;
         //     }catch (e){}
         //     next();
         // },
         // beforeRouteEnter(to, from, next){
         //     next(vm => {
-        //         vm.$refs.restaurantSwiper.swiper.init();
-        //     })
+        //         vm.swiperOption.centeredSlides = false;
+        //     });
         // }
     }
 </script>

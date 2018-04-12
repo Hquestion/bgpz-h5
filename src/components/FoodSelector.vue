@@ -1,7 +1,7 @@
 <template>
     <div class="food-selector">
         <div class="food-thumb">
-            <img :src="food.imageUrl">
+            <img v-lazy="food.imageUrl">
         </div>
         <div class="food-brief">
             <div class="food-name" v-text="food.name"></div>
@@ -40,22 +40,24 @@
     @import "../assets/less/variable";
     .food-selector {
         display: flex;
-        height: 6rem;
         justify-content: flex-start;
+        flex-direction: column;
         padding: 0.5rem 0.8rem;
         .food-thumb {
-            width: 40%;
-            height: 100%;
+            width: 100%;
+            height: 8rem;
+            text-align: center;
             img {
-                width: 100%;
-                height: 100%;
                 border-radius: @radius;
+                max-width: 100%;
+                max-height: 100%;
+                vertical-align: middle;
             }
         }
         .food-brief {
             flex: 1;
             height: 100%;
-            padding: 0 0 0 0.5rem;
+            padding: 0.5rem 0;
             .food-name {
                 width: 100%;
                 height: 60%;
