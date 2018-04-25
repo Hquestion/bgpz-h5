@@ -2,6 +2,7 @@
  * 服务端api接口统一处理，
  */
 import httpService from '../service/httpService';
+import config from '../config';
 
 export default {
     getRestaurantList() {
@@ -60,7 +61,7 @@ export default {
     },
     checkActivityCoupon(couponCode){
         return new Promise((resolve, reject) => {
-            httpService.get('http://192.168.0.117:777/api/Order/IsUseCoupon', {
+            httpService.get(config.activityServerUrl + 'api/OrderExtend/IsUseCoupon', {
                 couponCode: couponCode
             }, false, true).then(res => {
                 resolve(res);
@@ -69,7 +70,7 @@ export default {
     },
     postOrder(param){
         return new Promise((resolve, reject) => {
-            httpService.post('http://192.168.0.117:777/api/Order/CreateOrder', param, false, true).then(res => {
+            httpService.post(config.activityServerUrl + 'api/OrderExtend/CreateOrder', param, false, true).then(res => {
                 resolve(res);
             }, reject);
         });

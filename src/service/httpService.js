@@ -25,7 +25,7 @@ export default {
             Vue.http({
                 url: url,
                 method: 'POST',
-                body: JSON.stringify(data),
+                body: data,
                 ignore: !!ignoreLoading
             }).then(function(res){
                 that.handleResponse(res, resolve, reject);

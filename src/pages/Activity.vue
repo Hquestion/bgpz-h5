@@ -92,8 +92,8 @@
         </div>
 
         <datetime-picker :start-date="startDate" :end-date="endDate" :start-hour="startHour" :end-hour="endHour"
-                         year-format="{value}" month-format="{value}月" date-format="{value}日" hour-format="{value}时" minute-format="{value}分"
-                         type="datetime"  ref="timePicker" @confirm="onSelectDate"></datetime-picker>
+                         month-format="{value}月" date-format="{value}日" hour-format="{value}时" minute-format="{value}分"
+                         type="datetime" ref="timePicker" @confirm="onSelectDate"></datetime-picker>
         <popup-picker v-model="numberPickerVisible" :picker-slots="numberSlots" @data-change="onSelectCount"></popup-picker>
         <popup-picker v-model="packagePickerVisible" :picker-slots="packageSlots" @data-change="onSelectPackage"></popup-picker>
         <popup-picker v-model="originPickerVisible" :picker-slots="originSlots" @data-change="onSelectOrigin"></popup-picker>
@@ -365,7 +365,6 @@
             }
         },
         mounted(){
-            console.log(this.getTimeInfo());
         }
     }
 </script>
@@ -461,7 +460,7 @@
                                 li {
                                     width: 50%;
                                     text-align: center;
-                                    padding: 0.15rem 0;
+                                    padding: 0.05rem 0;
                                 }
                             }
                         }
@@ -485,7 +484,7 @@
                     }
                     i {
                         font-size: 0.32rem;
-                        color: #ccc;
+                        color: #999;
                         font-style: normal;
                     }
                 }
@@ -548,7 +547,8 @@
                             text-align: center;
                             margin-top: 0.2rem;
                             font-size: 0.38rem;
-                            border-radius: 0.2rem;
+                            border-radius: 0.15rem;
+                            color: #666;
                             &.active {
                                 background: #fff;
                                 border: 1px solid #E8001F;
