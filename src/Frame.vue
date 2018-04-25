@@ -1,7 +1,7 @@
 <template>
     <div class="main-frame">
         <h2>{{msg}}</h2>
-        <mt-button>parcel</mt-button>
+        <mt-button @click="onClick">parcel</mt-button>
         <router-view>
 
         </router-view>
@@ -35,6 +35,18 @@
             return {
                 msg: 'hello parcel',
                 selected: '外卖'
+            }
+        },
+        methods: {
+            onClick(){
+                navigator.getUserMedia({
+                    audio: false,
+                    video: true
+                }, function(){
+                    alert('成功');
+                }, function(e){
+                    alert(e.name)
+                })
             }
         }
     }

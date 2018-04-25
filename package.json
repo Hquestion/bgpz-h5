@@ -6,13 +6,14 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "parcel index.html --no-cache",
-    "build": "parcel build index.html",
+    "build": "node build.js && parcel build index.html",
     "patch": "node mint-ui.patch.js"
   },
   "author": "hquestion",
   "license": "ISC",
   "dependencies": {
     "babel-polyfill": "^6.26.0",
+    "flexible.js": "^2.0.19",
     "mint-ui": "^2.2.13",
     "static": "^2.0.0",
     "vue": "^2.5.16",

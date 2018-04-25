@@ -187,14 +187,34 @@
             },
             doBuy(){
                 //跳转下单页面
-
+                let foodNumber = 0;
+                let allPrice = 0;
+                let maxPrice = 0;
+                let imageUrl = '';
+                let serviceData = [];
+                this.cartData.forEach(item => {
+                    foodNumber += item.count;
+                    allPrice += +item.price * item.count;
+                    if(item.price > maxPrice) {
+                        maxPrice = item.price;
+                        imageUrl = item.imageUrl
+                    }
+                    let son = {id:item.id,num:item.count,type: '1'};
+                    serviceData.push(son);
+                });
+                let packageDetail = {foodNumber:foodNumber,price:allPrice,peopleRange:"8-10",name:"菜品单点",imageUrl:imageUrl};
+                localStorage.setItem("foodOrderCar",JSON.stringify({ServerList:serviceData,price:allPrice,companyId: this.$route.query.companyId}));
+                localStorage.setItem("packageDetail",JSON.stringify(packageDetail));
+                //跳转老下单页面
+                location.href = '';
             },
             addCartFood(food){
                 this.foodCartList.push({
                     id: food.id,
                     name: food.name,
                     price: food.price,
-                    cateId: food.cateId
+                    cateId: food.cateId,
+                    imageUrl: food.imageUrl
                 });
                 let cate = this.categoryList.find(item => item.id === food.cateId);
                 cate.count = (cate.count || 0) + 1;
@@ -250,7 +270,8 @@
                             id: item.id,
                             count: 1,
                             price: item.price,
-                            cateId: item.cateId
+                            cateId: item.cateId,
+                            imageUrl: item.imageUrl
                         });
                     }
                 });

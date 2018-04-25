@@ -14,8 +14,8 @@ Vue.http.options.emulateHTTP = true;
 Vue.http.interceptors.push(httpInterceptor);
 
 export default {
-    post: function(url, data, ignoreLoading){
-        url = config.httpServerUrl + url;
+    post: function(url, data, ignoreLoading, isAbsPath = false){
+        !isAbsPath && (url = config.httpServerUrl + url);
         if(typeof data === 'boolean') {
             ignoreLoading = data;
             data = {};
@@ -34,8 +34,8 @@ export default {
             });
         });
     },
-    get: function(url, data, ignoreLoading){
-        url = config.httpServerUrl + url;
+    get: function(url, data, ignoreLoading = false, isAbsPath = false){
+        !isAbsPath && (url = config.httpServerUrl + url);
         if(typeof data === 'boolean') {
             ignoreLoading = data;
             data = {};

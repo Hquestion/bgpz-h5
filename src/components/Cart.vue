@@ -8,6 +8,7 @@
             <transition-group>
                 <div class="food-item" v-for="(food, index) in data" :key="index">
                     <div class="food-name" v-text="food.name"></div>
+                    <div class="food-price" v-text="'￥' + food.price"></div>
                     <number-input v-model="food.count" class="food-count" @plus="onPlus(food)" @minus="onMinus(food)"></number-input>
                 </div>
             </transition-group>
@@ -59,15 +60,20 @@
                 justify-content: flex-start;
                 align-items: center;
                 padding: 0.5rem;
+                border-bottom: 1px solid #f2f2f2;
                 .food-name {
                     flex: 1;
                     width: calc(100% - 5rem);
+                }
+                .food-price {
+                    text-align: left;
+                    width: 5.5rem;
+                    color: @red;
                 }
                 .food-count {
                     width: 5rem;
                 }
             }
         }
-
     }
 </style>

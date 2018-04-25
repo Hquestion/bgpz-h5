@@ -30,3 +30,7 @@ export function serializeData(data) {
     let source = buffer.join( '&' ).replace( /%20/g, '+' );
     return( source );
 }
+
+export function fillZero(number){
+    return +number < 10 ? ('0' + +number) : ('' + number);
+}

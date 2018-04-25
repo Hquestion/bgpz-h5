@@ -4,6 +4,7 @@ import Frame from '../Frame';
 import Login from '../pages/Login';
 import RestaurantList from '../pages/RestaurantList';
 import FoodCart from '../pages/FoodCart';
+import Activity from '../pages/Activity';
 
 const routerCfg = [
     {
@@ -30,6 +31,10 @@ const routerCfg = [
         path: '/food-cart',
         name: 'FoodCart',
         component: FoodCart
+    }, {
+        path: '/activity',
+        name: 'Activity',
+        component: Activity
     }
 ];
 

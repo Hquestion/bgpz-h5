@@ -1,9 +1,6 @@
 <template>
     <div class="home-container">
         <div>this is home page!</div>
-        <div class="bg">
-
-        </div>
         <bg-tab v-model="currentTab">
             <bg-tab-card id="22">222</bg-tab-card>
             <bg-tab-card id="33">333</bg-tab-card>
@@ -12,6 +9,9 @@
             <bg-tab-card id="66">666</bg-tab-card>
             <bg-tab-card id="77">777</bg-tab-card>
         </bg-tab>
+        <div>
+            <input type="file" accept="audio/*" @change="onFileChange"  capture="microphone"/>
+        </div>
     </div>
 </template>
 
@@ -24,7 +24,8 @@
         name: "home",
         data(){
             return {
-                currentTab: '22'
+                currentTab: '22',
+                file: ''
             }
         },
         components: {
@@ -37,6 +38,9 @@
                 api.getRestaurantList().then(res => {
                     console.log(res)
                 })
+            },
+            onFileChange(e){
+                alert(e);
             }
         },
         mounted() {
@@ -48,11 +52,5 @@
 <style lang="less" scoped>
     .home-container {
         overflow: hidden;
-    }
-    .home-container .bg {
-        width: 200%;
-        height: 20vh;
-        background: #26a2ff;
-        transform: rotate(60deg);
     }
 </style>
