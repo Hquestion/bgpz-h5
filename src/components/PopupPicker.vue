@@ -1,8 +1,12 @@
 <template>
     <popup position="bottom" v-model="popupVisible" style="width: 100%;">
         <div class="picker-box">
-            <div class="ok-btn" @click="onSelectCount">确定</div>
-            <picker :slots="pickerSlots" @change="onNumberChange" value-key="label"></picker>
+            <div class="btn-group">
+                <div class="cancel-btn" @click="cancel">取消</div>
+                <div class="title">{{title}}</div>
+                <div class="ok-btn" @click="onSelectCount">确定</div>
+            </div>
+            <picker :slots="pickerSlots" @change="onNumberChange" :value-key="valueKey" ref="picker"></picker>
         </div>
     </popup>
 </template>
@@ -22,7 +26,13 @@
                 default: false,
                 type: Boolean
             },
-            pickerSlots: {}
+            pickerSlots: {},
+            title: {
+                default: ''
+            },
+            valueKey: {
+                default: 'label'
+            }
         },
         model: {
             prop: 'visible',
@@ -35,10 +45,14 @@
         methods: {
             onNumberChange(picker, value){
                 this.tempValue = value;
+                this.$emit('change', picker, value);
             },
             onSelectCount(){
-                this.$emit('data-change', this.tempValue);
+                this.$emit('data-change', this.$refs.picker.getValues());
                 this.$emit('visible-change', false);
+            },
+            cancel(){
+                this.popupVisible = false;
             }
         },
         watch:{
@@ -56,11 +70,33 @@
     }
 </script>
 
-<style scoped>
-    .picker-box .ok-btn{
-        text-align: right;
-        color: #007aff;
-        background: #f4f4f4;
-        padding: 0.4rem 0.5rem;
+<style lang="less">
+    .picker-box{
+        .btn-group {
+            padding: 0.4rem 0.5rem;
+            color: #007aff;
+            background: #f4f4f4;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            .cancel-btn {
+                text-align: left;
+                width: auto;
+                padding: 0 0.4rem;
+            }
+            .title {
+                flex: 1;
+                text-align: center;
+                color: #1b1b1b;
+            }
+            .ok-btn{
+                text-align: right;
+                width: auto;
+                padding: 0 0.4rem;
+            }
+        }
+        .picker-slot {
+            flex: 1;
+        }
     }
 </style>

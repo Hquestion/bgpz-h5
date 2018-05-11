@@ -18,12 +18,12 @@ export function serializeData(data) {
             continue;
         }
         let value = data[name];
-        value = value || '';
+        value = typeof value === 'undefined' ? '' : value;
         if(typeof value === 'object') {
             value = JSON.stringify(value);
         }
         buffer.push(
-            encodeURIComponent( name ) + '=' + encodeURIComponent( ( value == null ) ? '' : value )
+            encodeURIComponent( name ) + '=' + encodeURIComponent( ( value === null ) ? '' : value )
         );
     }
     // Serialize the buffer and clean it up for transportation.
@@ -33,4 +33,17 @@ export function serializeData(data) {
 
 export function fillZero(number){
     return +number < 10 ? ('0' + +number) : ('' + number);
+}
+
+export function range(start, end, step = 1){
+    let res = [];
+    for(;start <= end; start += step) {
+        res.push(start);
+    }
+    return res;
+}
+
+export function getMonthDays(year,month){
+    let now = new Date(year,month, 0);
+    return now.getDate();
 }

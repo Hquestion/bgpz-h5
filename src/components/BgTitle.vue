@@ -19,7 +19,7 @@
         background-position: left center;
         background-repeat: no-repeat;
         text-align: center;
-        font-size: 0.53rem;
+        font-size: 0.4rem;
         color: #E8001F;
     }
 </style>

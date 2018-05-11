@@ -11,14 +11,15 @@
                     </div>
                     <div class="text-desc">
                         <p>
-                            “到家的美食节”是现代快报旗下酒店与美食行业融媒体平台“酒食客”联合南京互联网私宴定制平台“八个盘子”共同推出的酒食客上线一周年美食活动。邀请120位尊贵客户体验私宴上门定制服务。
+                            到家的美食节是现代快报旗下酒店与美食行业融媒体平台“酒食客”联合南京互联网私宴定制平台“八个盘子”共同推出的酒食客上线一周年美食活动。邀请120位尊贵客户体验私宴上门定制服务。
                         </p>
                         <p>
                             八个盘子，高端私宴，上门定制，适合生日宴会、商务宴请、朋友聚餐、年夜饭等不同场景需求。明星酒店提供新鲜食材，星级大厨上门烹饪定制，餐后清洁我们全包，让用户在家也能享受到高品质的菜肴和星级服务。
                         </p>
                     </div>
                 </div>
-                <div class="sub-header">
+                <img src="../assets/image/pic.jpg" style="width: 100%;margin-top: 0.8rem;">
+                <div class="sub-header" style="margin-top: 0.5rem;">
                     <bg-title>活动套餐</bg-title>
                 </div>
                 <div class="package-content">
@@ -57,26 +58,30 @@
                         4、本代金券面值1000元，也可预约八个盘子平台其余套餐服务（需补足差价）；
                     </p>
                     <p>
-                        5、优惠券有效期：2018年4月26日至2018年7月27日，请在有效期内使用。
+                        5、优惠券有效期：2018年4月26日至2018年7月27日，请在有效期内使用；
                     </p>
                     <p>
-                        6、八个盘子客服热线：<a href="tel:4008-718-181">4008-718-181</a><i>（周一到周日9：00-18：00）</i>
+                        6、就餐时请出示此代金券（电子券除外）；
+                    </p>
+                    <p>
+                        7、八个盘子客服热线：<a href="tel:4008-718-181">4008-718-181</a><i>（周一到周日9：00-18：00）</i>
                     </p>
                 </div>
             </div>
             <div class="block order-block">
                 <bg-title>在线预约</bg-title>
+                <div class="tip"><span>小提示：</span><span>因为活动参与人数较多，建议您时间尽量往后预约！如出现无法排班情况，客服会联系您协调。</span></div>
                 <div class="form-container">
-                    <field label="兑换码" placeholder="请输入兑换码(代金券右下角)" type="number" v-model="coupon"></field>
-                    <field class="select" label="就餐时间" placeholder="请选择用餐时间" readonly type="text" v-model="time" @click.native.stop.prevent="onShowPicker"></field>
-                    <field label="联系人" placeholder="请输入姓名" type="text" v-model="username"></field>
-                    <field label="联系电话" placeholder="请输入联系电话" type="tel" v-model="phone"></field>
-                    <field label="地址" placeholder="请输入就餐地址" type="textarea" rows="2" v-model="address"></field>
-                    <field class="select" label="套餐选择" placeholder="请选择套餐" readonly type="text" v-model="selectPackage.label" @click.native.stop.prevent="choosePackage"></field>
-                    <field class="select" label="就餐人数" placeholder="请选择就餐人数" readonly type="text" v-model="number.label" @click.native.stop.prevent="choosePersonNumber"></field>
-                    <field class="select" label="来源渠道" placeholder="请输入来源渠道" readonly type="text" v-model="origin.label" @click.native.stop.prevent="chooseOrigin"></field>
+                    <field label="兑换码：" placeholder="请输入兑换码(代金券右下角)" type="number" v-model="coupon"></field>
+                    <field class="select" label="就餐时间：" placeholder="请选择用餐时间" readonly type="text" v-model="time" @click.native.stop.prevent="onShowPicker"></field>
+                    <field label="联系人：" type="text" v-model="username"></field>
+                    <field label="联系电话：" type="tel" v-model="phone"></field>
+                    <field label="地址：" type="textarea" rows="2" v-model="address"></field>
+                    <field class="select" label="套餐选择：" placeholder="请选择套餐" readonly type="text" v-model="selectPackage.label" @click.native.stop.prevent="choosePackage"></field>
+                    <field class="select" label="就餐人数：" placeholder="请选择就餐人数" readonly type="text" v-model="number.label" @click.native.stop.prevent="choosePersonNumber"></field>
+                    <field class="select" label="来源渠道：" placeholder="请选择来源渠道" readonly type="text" v-model="origin.label" @click.native.stop.prevent="chooseOrigin"></field>
                     <div class="remark-container">
-                        <div class="remark-label">备注</div>
+                        <div class="remark-label">备注：</div>
                         <div class="remark-data">
                             <div class="remark-item" v-for="(remark, index) in remarkList" :key="index" :class="{active: remark.isActive}" @click.prevent.stop="toggleRemark(remark)">
                                 {{remark.label}}
@@ -101,7 +106,7 @@
 </template>
 
 <script>
-    import {Field, DatetimePicker, Popup, Picker, Button, Toast} from 'mint-ui';
+    import {Field, DatetimePicker, Popup, Picker, Button, Toast, MessageBox} from 'mint-ui';
     import PopupPicker from '../components/PopupPicker';
     import getTimeList from '../mixins/getTimeList';
     import BgTitle from "../components/BgTitle";
@@ -109,6 +114,8 @@
     import {fillZero} from "../util";
     import api from '../api';
 
+    const myToast = Toast;
+    const MsgBox = MessageBox;
     export default {
         name: "Activity",
         mixins: [getTimeList],
@@ -122,7 +129,10 @@
                 time: '',
                 phone: '',
                 address: '',
-                number: {},
+                number: {
+                    value: 5,
+                    label: '5人'
+                },
                 numberPickerVisible: false,
                 numberSlots: [{
                     flex: 1,
@@ -181,14 +191,11 @@
                 originSlots: [{
                     flex: 1,
                     values: [{
-                        value: '现代快报',
-                        label: '现代快报'
+                        value: '现代快报-酒食客',
+                        label: '现代快报-酒食客'
                     },{
-                        value: '江苏银行',
-                        label: '江苏银行'
-                    },{
-                        value: '南京银行',
-                        label: '南京银行'
+                        value: '中国银行',
+                        label: '中国银行'
                     }],
                     textAlign: 'center',
                     defaultIndex: 0
@@ -288,42 +295,42 @@
             },
             onOrder(){
                 if(!this.coupon) {
-                    Toast({
+                    myToast({
                         message: '请输入兑换码编号',
                         position: 'bottom'
                     });
                 } else if(!this.time) {
-                    Toast({
+                    myToast({
                         message: '请选择用餐时间',
                         position: 'bottom'
                     });
                 } else if(!this.username) {
-                    Toast({
+                    myToast({
                         message: '请输入姓名',
                         position: 'bottom'
                     });
                 }else if(!this.phone) {
-                    Toast({
+                    myToast({
                         message: '请输入联系电话',
                         position: 'bottom'
                     });
                 } else if(!this.address) {
-                    Toast({
+                    myToast({
                         message: '请输入用餐地址',
                         position: 'bottom'
                     });
                 }else if(!this.selectPackage || !this.selectPackage.label) {
-                    Toast({
+                    myToast({
                         message: '请选择套餐',
                         position: 'bottom'
                     });
                 }else if(!this.number || !this.number.label) {
-                    Toast({
+                    myToast({
                         message: '请选择用餐人数',
                         position: 'bottom'
                     });
                 }else if(!this.origin || !this.origin.label) {
-                    Toast({
+                    myToast({
                         message: '请选择来源渠道',
                         position: 'bottom'
                     });
@@ -344,18 +351,15 @@
                             "dinner_date": this.time,
                             "dinner_name": this.selectPackage.label
                         }).then(res => {
-                            Toast({
-                                message: '恭喜您，预定成功！',
-                                position: 'bottom'
-                            });
+                            MsgBox.alert('我们已经收到您的预约，很快会有客服联系您！', '预定成功');
                         }, ()=> {
-                            Toast({
+                            myToast({
                                 message: '套餐预定失败，请重试！',
                                 position: 'bottom'
                             });
                         });
                     }, ()=>{
-                        Toast({
+                        myToast({
                             message: '兑换码不存在或者已失效！',
                             position: 'bottom'
                         });
@@ -394,10 +398,10 @@
                 border-radius: 0.1rem;
                 margin-top: 0.6rem;
                 &.order-block {
-                    padding-bottom: 2.5rem;
-                    background-image: ~"url(../assets/image/order-bg.jpg)";
+                    padding-bottom: 3.5rem;
+                    background-image: ~"url(../assets/image/people.jpg)";
                     background-position: right bottom;
-                    background-size: 900/3/37.5rem 314/3/37.5rem;
+                    background-size: 1035/3/37.5rem 476/3/37.5rem;
                     background-repeat: no-repeat;
                 }
                 &:nth-child(1) {
@@ -410,15 +414,15 @@
                     text-align: center;
                     padding: 0.6rem 0;
                     img {
-                        width: 705/3/37.5rem;
+                        width: 679/3/37.5rem;
                         height: 103/3/37.5rem;
                     }
                 }
                 .text-desc {
                     padding: 0;
-                    line-height: 1.5;
+                    line-height: 1.7;
                     p {
-                        text-indent: 1rem;
+                        text-indent: 0.8rem;
                     }
                 }
             }
@@ -436,20 +440,20 @@
                     }
                     .package-name {
                         color: #E8001F;
-                        font-size: 0.505rem;
+                        font-size: 0.4rem;
                         text-align: center;
                     }
                     .scence {
-                        color: #111;
-                        font-size: 0.36rem;
+                        color: #666;
+                        font-size: 0.3rem;
                     }
                     .food-container {
                         .food-cate {
-                            font-size: 0.35rem;
+                            font-size: 0.3rem;
                             text-align: center;
                             .cate-name {
                                 color: #999;
-                                font-size: 0.32rem;
+                                font-size: 0.3rem;
                                 padding: 0.3rem 0 0.1rem;
                             }
                             ul {
@@ -460,7 +464,7 @@
                                 li {
                                     width: 50%;
                                     text-align: center;
-                                    padding: 0.05rem 0;
+                                    padding: 0.1rem 0;
                                 }
                             }
                         }
@@ -477,13 +481,13 @@
             .activity-pre-know {
                 font-size: 0.35rem;
                 p {
-                    line-height: 1.7;
+                    line-height: 1.9;
                     a {
                         color: #E8001F;
                         text-decoration: underline;
                     }
                     i {
-                        font-size: 0.32rem;
+                        font-size: 0.2rem;
                         color: #999;
                         font-style: normal;
                     }
@@ -503,10 +507,19 @@
             input, textarea {
                 border: 1px solid #f4f4f4;
                 border-radius: 0.1rem;
-                font-size: 0.4rem;
-                padding: 0.1rem;
+                font-size: 0.39rem;
+                padding: 0.1rem 0.1rem 0.08rem;
             }
             .form-container {
+                .mint-cell-wrapper {
+                    background-image: none !important;
+                }
+                .mint-cell-title {
+                    width: 2.2rem;
+                    .mint-cell-text {
+                        font-size: 0.38rem;
+                    }
+                }
                 .select .mint-cell-value {
                     position: relative;
                     &:after {
@@ -524,12 +537,10 @@
                     display: flex;
                     justify-content: flex-start;
                     align-items: center;
-                    border-bottom: 1px solid #f2f2f2;
                     padding: 0 10px 0.2rem;
-                    font-size: 16px;
-                    border-top: 1px solid #f3f3f3;
+                    font-size: 0.38rem;
                     .remark-label {
-                        width: 105px;
+                        width: 2.2rem;
                         text-align: left;
                     }
                     .remark-data {
@@ -561,9 +572,20 @@
         }
         .rights {
             padding-top: 0.7rem;
-            font-size: 0.38rem;
+            font-size: 0.1rem;
             text-align: center;
-            color: #fff;
+            color: #ffbfbf;
+        }
+        .tip {
+            padding: 0.2rem 0;
+            font-size: 0.32rem;
+            text-align: left;
+            color: #f60;
+            line-height: 1.7;
+            display: flex;
+            span:nth-child(2) {
+                flex: 1;
+            }
         }
     }
 </style>

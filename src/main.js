@@ -1,6 +1,7 @@
 import Vue from 'vue/dist/vue';
 import VueRouter from 'vue-router';
 import App from './App';
+import store from './store/index';
 import 'mint-ui/lib/style.min.css';
 const VueTouch = require('vue-touch');
 import VueLazyload from 'vue-lazyload';
@@ -10,7 +11,7 @@ const loadingImg = require('../static/img/loading1.gif');
  * vue-navigation  导航默认行为类似手机APP的页面导航
  * https://github.com/zack24q/vue-navigation/blob/master/README_CN.md
  */
-import VueNavigation from 'vue-navigation';
+// import VueNavigation from 'vue-navigation';
 require('babel-polyfill');
 
 import routerCfg from './router';
@@ -31,10 +32,11 @@ let router = new VueRouter({
 });
 routerGuard(router);
 
-Vue.use(VueNavigation, {router});
+// Vue.use(VueNavigation, {router});
 
 window.myApp = new Vue({
     el: '#app',
+    store,
     router,
     components: {
         App

@@ -1,9 +1,9 @@
 <template>
     <div class="main">
         <transition>
-            <navigation>
+            <!--<navigation>-->
                 <router-view></router-view>
-            </navigation>
+            <!--</navigation>-->
         </transition>
     </div>
 </template>
@@ -17,35 +17,15 @@
             }
         },
         created() {
-            // bind event
-            this.$navigation.on('forward', (to, from) => {
-                console.log('forward to', to, 'from ', from)
-            })
-            this.$navigation.on('back', (to, from) => {
-                console.log('back to', to, 'from ', from)
-            })
-            this.$navigation.on('replace', (to, from) => {
-                console.log('replace to', to, 'from ', from)
-            })
-            this.$navigation.on('refresh', (to, from) => {
-                console.log('refresh to', to, 'from ', from)
-            })
-            this.$navigation.on('reset', () => {
-                console.log('reset')
-            })
-            // and use [once, off] methods
-            this.$navigation.once('forward', () => {
-                console.log('appear once')
-            })
-            const off = () => {
-                console.log('will not appear')
-            }
-            this.$navigation.on('forward', off)
-            this.$navigation.off('forward', off)
+            console.log(this.store);
         }
     }
 </script>
 
 <style scoped>
-
+    .main {
+        font-size: 0.45rem;
+        background: #f2f2f2;
+        min-height: 100vh;
+    }
 </style>

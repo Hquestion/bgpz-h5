@@ -1,57 +1,39 @@
 <template>
     <div class="main-frame">
-        <h2>{{msg}}</h2>
-        <mt-button @click="onClick">parcel</mt-button>
-        <router-view>
+        <router-view class="frame-content">
 
         </router-view>
-        <mt-tabbar v-model="selected">
-            <mt-tab-item id="外卖">
-                外卖
-            </mt-tab-item>
-            <mt-tab-item id="订单">
-                订单
-            </mt-tab-item>
-            <mt-tab-item id="发现">
-                发现
-            </mt-tab-item>
-            <mt-tab-item id="我的">
-                我的
-            </mt-tab-item>
-        </mt-tabbar>
+        <bg-navbar></bg-navbar>
     </div>
 </template>
 
 <script>
-    import {TabItem, Tabbar, Button} from 'mint-ui';
+    import BgNavbar from './components/BgNavbar';
     export default {
         name: "frame",
         components: {
-            MtTabItem: TabItem,
-            MtTabbar: Tabbar,
-            MtButton: Button
+            BgNavbar
         },
         data(){
             return {
-                msg: 'hello parcel',
-                selected: '外卖'
+                selected: '聚会'
             }
         },
         methods: {
-            onClick(){
-                navigator.getUserMedia({
-                    audio: false,
-                    video: true
-                }, function(){
-                    alert('成功');
-                }, function(e){
-                    alert(e.name)
-                })
-            }
+
         }
     }
 </script>
 
-<style scoped>
-
+<style lang="less" scoped>
+    .main-frame {
+        font-size: 16/37.5rem;
+        .frame-content {
+            width: 100vw;
+            height: calc(100% - 1.3333333333333333rem);
+            overflow-y: auto;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+        }
+    }
 </style>

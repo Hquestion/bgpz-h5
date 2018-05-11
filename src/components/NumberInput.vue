@@ -58,16 +58,16 @@
         justify-items: flex-start;
         width: 100%;
         text-align: center;
-        font-size: 1.1rem;
+        font-size: 0.45rem;
     }
     .number-input-component .count {
         flex: 1;
-        width: 2rem;
-        font-size: 1.2rem;
+        width: 1rem;
+        font-size: 0.48rem;
     }
     .number-input-component .icon {
-        width: 1.6rem;
-        height: 1.6rem;
+        width: 0.8rem;
+        height: 0.8rem;
         background-size: 100% 100%;
     }
     .number-input-component .icon.icon-minus {
