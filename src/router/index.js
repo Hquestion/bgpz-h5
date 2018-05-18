@@ -14,6 +14,8 @@ import CreateParty from '../pages/CreateParty';
 import AddressList from '../pages/AddressList';
 import EditAddress from '../pages/EditAddress';
 import ShareParty from '../pages/ShareParty';
+import MyPartyList from '../pages/MyPartyList';
+import MyJoinedParty from '../pages/MyJoinedParty';
 
 const routerCfg = [
     {
@@ -91,6 +93,14 @@ const routerCfg = [
         path: '/share-party/:id',
         name: 'ShareParty',
         component: ShareParty
+    }, {
+        path: '/my-party',
+        name: 'MyParty',
+        component: MyPartyList
+    }, {
+        path: '/my-joined-party',
+        name: 'MyJoinParty',
+        component: MyJoinedParty
     }
 ];
 

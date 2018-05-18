@@ -76,7 +76,7 @@
         <div class="party-desc">
             <bg-cell column="true">
                 <div slot="left">聚会说明</div>
-                <textarea slot="middle" placeholder="请输入不超过200字的主题说明" v-model="model.description"></textarea>
+                <textarea slot="middle" placeholder="请输入50-200字的主题说明" v-model="model.description"></textarea>
             </bg-cell>
             <bg-cell column="true" :reverse="false">
                 <div slot="left">聚会宣传图片<span class="golden">（请上传4-6张）</span></div>
@@ -180,8 +180,8 @@
                 return `${this.model.partyTableNum}桌、${this.model.partyNumber}人`;
             },
             profit(){
-                if(this.model.joinFee) {
-                    return (this.model.joinFee - Math.ceil(this.model.feePer * this.model.partyTableNum / this.model.partyNumber)) * this.model.partyNumber;
+                if(this.joinFeeNumber) {
+                    return (this.joinFeeNumber - Math.ceil(this.model.feePer * this.model.partyTableNum / this.model.partyNumber)) * this.model.partyNumber;
                 }else {
                     return 0;
                 }
@@ -217,7 +217,7 @@
                 this.selectTimeVisible = true;
             },
             onConfirmTime(value){
-                this.model.timeDate = dayjs(`${parseInt(value[0])}-${fillZero(parseInt(value[1]))}-${fillZero(parseInt(value[2]))} ${value[3]}`);
+                this.model.timeDate = dayjs(`${parseInt(value[0])}/${fillZero(parseInt(value[1]))}/${fillZero(parseInt(value[2]))} ${value[3]}`);
                 this.model.time = this.formatTime(+this.model.timeDate.toDate());
             },
             changeBgImg(){
@@ -255,6 +255,7 @@
             },
             onAddressTypeChange(){
                 this.model.address = '';
+                this.model.partyPoster = [];
             },
             selectDinnerFee(){
                 this.selectDinnerFeeVisible = true;
@@ -297,9 +298,9 @@
                                 id: res.data.partyId
                             }
                         });
-                    }, ()=>{
+                    }, (res)=>{
                         Toast({
-                            message: '聚会发布失败，请重试',
+                            message: res.msg,
                             position: 'bottom'
                         });
                     })
@@ -364,8 +365,8 @@
                         position: absolute;
                         top: 3/37.5rem;
                         right: 3/37.5rem;
-                        width: 30/37.5rem;
-                        height: 30/37.5rem;
+                        width: 20/37.5rem;
+                        height: 20/37.5rem;
                         background-image: ~"url(../assets/image/chosed-w.png)";
                         z-index: 2;
                         background-size: 100% 100%;

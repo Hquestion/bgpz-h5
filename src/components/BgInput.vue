@@ -78,7 +78,7 @@
         }
         input {
             width: 100%;
-            height: 40/37.5rem;
+            height: 30/37.5rem;
             text-indent: 0.2rem;
             border: none;
             outline: none;

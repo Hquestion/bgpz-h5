@@ -4,7 +4,7 @@
             <div slot="left">南京</div>
             <div slot="action">
                 <v-touch class="add-party" @tap="startParty()">
-                    <img src="../assets/image/Add.png">
+                    <span>发起聚会</span>
                 </v-touch>
             </div>
         </bg-header>
@@ -68,7 +68,7 @@
         methods: {
             init(){
                 api.getPartyList(this.pageIndex, pageSize, status, type, this.content).then(res => {
-                    this.partyList = res.data.list;
+                    this.partyList = res.data && res.data.list || [];
                 });
             },
             startParty(){
@@ -114,9 +114,26 @@
 </script>
 
 <style lang="less" scoped>
+    @import "../assets/less/variable";
     .party {
         padding-top: 50px;
         background: #fff;
+        .add-party {
+            width: auto;
+            text-align: center;
+            color: @white;
+            background: @red;
+            font-size: 0;
+            border-radius: 5/37.5rem;
+            padding: 10/37.5rem 0rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            span {
+                display: block;
+                font-size: 14/37.5rem;
+            }
+        }
         .party-actions {
             display: flex;
             padding: 20/37.5rem;

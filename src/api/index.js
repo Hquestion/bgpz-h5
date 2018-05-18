@@ -193,5 +193,27 @@ export default {
     // 发布聚会
     releaseParty(param){
         return httpService.postForm('custom/party/apply', param);
+    },
+    // 分享完成之后正式启动聚会
+    openParty(partyId){
+        return httpService.postForm('custom/party/open', {
+            partyId: partyId
+        });
+    },
+    getPackageFoodList(id) {
+        return httpService.postForm('common/packageFoodList', {
+            packageId: id
+        });
+    },
+    updateOrderStatus(orderId, status){
+        return httpService.postForm('custom/party/updateParty', {
+            orderId: orderId,
+            customStatus: status
+        });
+    },
+    getPartyOrderDetail(orderId){
+        return httpService.postForm('custom/party/selUserParty', {
+            id: orderId
+        });
     }
 };

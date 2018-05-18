@@ -1,11 +1,11 @@
 <template>
     <div class="join-party">
         <bg-header title="立即报名"></bg-header>
-        <party-info :data="partyMeta"></party-info>
+        <party-info :data="partyMeta" :is-join="true"></party-info>
         <div class="field row">
             <div class="label">报名人数</div>
             <div class="content">
-                <number-input v-model="joinNumber"></number-input>
+                <number-input v-model="joinNumber" :min="1" :max="partyMeta.partyNumber - partyMeta.hasNumber"></number-input>
             </div>
         </div>
         <div class="field">
@@ -163,6 +163,7 @@
         padding-top: 50px;
         padding-bottom: 50/37.5rem;
         background: #fff;
+        font-size: 15/37.5rem;
         .field {
             display: flex;
             justify-content: flex-start;
@@ -174,7 +175,7 @@
                 align-items: center;
             }
             .label {
-                font-size: 0.5rem;
+                font-size: 16/37.5rem;
                 color: #000;
             }
             .content {
@@ -197,11 +198,11 @@
                     }
                 }
                 .other {
-                    font-size: 0.45rem;
+                    font-size: 15/37.5rem;
                     padding: 5/37.5rem 0;
                     .golden {
                         color: @golden;
-                        font-size: 0.38rem;
+                        font-size: 15/37.5rem;
                     }
                 }
                 .other-input {
@@ -211,7 +212,7 @@
                     display: flex;
                     justify-content: space-between;
                     align-items: center;
-                    font-size: 0.45rem;
+                    font-size: 15/37.5rem;
                     padding: 10/37.5rem 0;
                 }
             }

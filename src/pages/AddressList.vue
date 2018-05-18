@@ -1,7 +1,7 @@
 <template>
     <div class="address-list">
-        <bg-header title="管理常用地址">
-            <div slot="action">
+        <bg-header :title="title">
+            <div slot="action" v-show="addressType === 'user'">
                 <v-touch class="add-address" @tap="addAddress">
                     <img src="../assets/image/Add.png">
                 </v-touch>
@@ -38,7 +38,8 @@
             return {
                 addressList: [],
                 addressType: 'user',
-                isChoose: false
+                isChoose: false,
+                title: '管理常用地址'
             };
         },
         methods: {
@@ -99,6 +100,9 @@
             this.isChoose = (this.$route.query.isChoose + '') === '1';
             if(this.$route.query.addressType) {
                 this.addressType = this.$route.query.addressType;
+            }
+            if(this.isChoose) {
+                this.title = '选择地址';
             }
             this.init();
         }

@@ -10,7 +10,7 @@
             <img src="../assets/image/meet-red.png" v-else>
             <div>聚会</div>
         </v-touch>
-        <v-touch class="bg-navbar-item" @tap="doNavigate('shop')" :class="{'active': selected === '商城'}">
+        <v-touch class="bg-navbar-item" @tap="doNavigate('shop')" :class="{'active': selected === '商城'}" style="display: none;">
             <img src="../assets/image/shop.png" v-if="selected !== '商城'">
             <img src="../assets/image/shop-red.png" v-else>
             <div>商城</div>
@@ -25,10 +25,10 @@
 
 <script>
     const routerNameMap = {
-        'home': 'Home',
+        'home': '../index/index.html',
         'party': 'Party',
         'shop': 'Shop',
-        'mine': 'Mine'
+        'mine': '../user/index.html'
     };
     export default {
         name: "BgNavbar",
@@ -50,9 +50,7 @@
                     });
                 }else {
                     //todo 部署时换成现网地址
-                    this.$router.push({
-                        name: routerNameMap[tab]
-                    });
+                    window.location.href = routerNameMap[tab]
                 }
             }
         },
@@ -72,7 +70,7 @@
         justify-content: flex-start;
         align-items: center;
         z-index: 99;
-        font-size: 0.4rem;
+        font-size: 13/37.5rem;
         text-align: center;
         width: 100%;
         height: 50/37.5rem;
@@ -88,8 +86,7 @@
                 color: @red;
             }
             img {
-                width: 23/37.5rem;
-                height: 23/37.5rem;
+
             }
         }
     }

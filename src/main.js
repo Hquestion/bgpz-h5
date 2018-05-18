@@ -34,6 +34,8 @@ routerGuard(router);
 
 // Vue.use(VueNavigation, {router});
 
+window.EventBus = new Vue();
+
 window.myApp = new Vue({
     el: '#app',
     store,

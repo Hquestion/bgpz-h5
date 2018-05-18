@@ -1,8 +1,8 @@
 <template>
     <mt-header fixed :title="title" class="bgpz-header">
-        <v-touch slot="left" @tap="back()" v-if="type === 'back'">
-            <mt-button icon="back"/>
-        </v-touch>
+        <div slot="left" @click="back()" v-if="type === 'back'">
+            <img src="../assets/image/back.png">
+        </div>
         <div class="default" v-else slot="left">
             <slot name="left"></slot>
         </div>
@@ -37,18 +37,27 @@
                 }else {
                     this.$router.go(-1);
                 }
+            },
+            hideShareTip(){
+                window.EventBus.$emit('share-visible', false);
             }
         }
     }
 </script>
 
 <style lang="less">
+    .main.share-visible .bgpz-header {
+        top: 80/37.5rem;
+    }
     .bgpz-header {
         background: #fff;
         border-bottom: 1px solid #dedede;
         color: #1b1b1b;
         height: 50px;
         font-size: 0.5rem;
+        top: 0;
+        transition: top ease-in .5s;
+        z-index: 10 !important;
         .default {
             font-size: 0.48rem;
         }

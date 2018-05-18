@@ -7,7 +7,7 @@
                 <span v-text="data.nickname"></span>
                 <span class="tag">成员</span>
             </div>
-            <div class="remark" v-text="data.remark"></div>
+            <div class="remark" v-text="data.remark || 'TA很懒，招呼都不打'"></div>
         </div>
         <div class="number">
             <span>{{data.number}}</span>人
@@ -48,11 +48,13 @@
         }
         .brief {
             flex: 1;
+            margin-top: 0.1rem;
             .remark {
                 color: @text-grey;
                 min-height: 0.5rem;
                 word-break: break-all;
                 line-height: 1;
+                margin-top: 0.15rem;
             }
             .name {
                 font-size: 0.5rem;

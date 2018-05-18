@@ -43,6 +43,9 @@ const mutations = {
         let cityName = data.cityInfo && data.cityInfo.name || '';
         let regionName = data.regionInfo && data.regionInfo.name || '';
         state.partyMeta.address = `${stateName}${cityName}${regionName}${data.addr}`;
+        if(data.pic_party) {
+            state.partyMeta.partyPoster = JSON.parse(data.pic_party);
+        }
     },
     [SET_PARTY_META](state, data){
         state.partyMeta = data;

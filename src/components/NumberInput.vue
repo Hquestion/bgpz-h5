@@ -21,7 +21,9 @@
             event: 'change'
         },
         props: {
-            count: Number
+            count: Number,
+            max: Number,
+            min: Number
         },
         data() {
             return {
@@ -30,14 +32,18 @@
         },
         methods: {
             minus($event) {
-                this.numberVal--;
-                this.$emit('change', this.numberVal);
-                this.$emit('minus', $event);
+                if(typeof this.min === 'undefined' || this.numberVal > this.min) {
+                    this.numberVal--;
+                    this.$emit('change', this.numberVal);
+                    this.$emit('minus', $event);
+                }
             },
             plus($event) {
-                this.numberVal++;
-                this.$emit('change', this.numberVal);
-                this.$emit('plus', $event);
+                if(typeof this.min === 'undefined' || this.numberVal < this.max) {
+                    this.numberVal++;
+                    this.$emit('change', this.numberVal);
+                    this.$emit('plus', $event);
+                }
             }
         },
         updated(){

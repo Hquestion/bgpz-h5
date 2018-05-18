@@ -54,7 +54,7 @@
             input {
                 margin-left: 20/37.5rem;
                 width: calc(100% - 1.3333rem);
-                height: 38/37.5rem;
+                height: 36/37.5rem;
                 margin-top: 1/37.5rem;
                 border: none;
                 outline: none;

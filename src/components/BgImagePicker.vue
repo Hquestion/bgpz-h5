@@ -1,7 +1,7 @@
 <template>
     <div class="bg-image-picker">
         <div class="bg-image-picked" v-for="(img, index) in pickedImgs" :key="index">
-            <img :src="img">
+            <img :src="img.img">
             <div class="del-btn" @click="delImg(index)">
                 <img src="../assets/image/delete-icon.png">
             </div>
@@ -93,8 +93,13 @@
                     request.onload = function(e) {
                         if (request.status === 200) {
                             let responseData = JSON.parse(request.response);
+                            console.log(responseData)
                             let picUrl = "http://eightplate.b0.upaiyun.com" + responseData.url;
-                            resolve(picUrl);
+                            resolve({
+                                img: picUrl,
+                                width: responseData['image-width'],
+                                height: responseData['image-height']
+                            });
                         }else{
                             reject();
                         }

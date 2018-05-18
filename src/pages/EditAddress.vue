@@ -64,7 +64,10 @@
                 addressInfo: {
                     name: '',
                     phone: '',
-                    addr: ''
+                    addr: '',
+                    cityInfo: {},
+                    stateInfo: {},
+                    regionInfo: {}
                 },
                 isSetDefault: true,
                 addressPickerSlots: [],
@@ -150,13 +153,14 @@
 <style lang="less" scoped>
     .edit-address {
         padding-top: 50px;
+        padding-bottom: 30/37.5rem;
         .detail-address {
             width: 100%;
-            padding: 15/37.5rem;
+            padding: 0 15/37.5rem;
             background: #fff;
             textarea {
                 width: 100%;
-                height: 150/37.5rem;
+                height: 80/37.5rem;
                 border: 1px solid #dedede;
                 outline: none;
                 font-size: 15/37.5rem;

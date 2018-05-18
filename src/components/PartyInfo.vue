@@ -10,10 +10,10 @@
                     <span>{{data.ownerName}}</span><span>聚主</span>
                 </div>
                 <div>
-                    联合创始人
+                    职业：{{data.ownerIdentity}}
                 </div>
             </div>
-            <div class="party-status">
+            <div class="party-status" v-show="!isJoin">
                 <div class="indicator" v-if="data.status === 1">报名中</div>
                 <div class="party-count">
                     已报名：<span v-text="data.hasNumber"></span>人
@@ -30,6 +30,7 @@
             <div class="label">聚会人数</div>
             <div class="label-content">
                 {{data.partyNumber}}人
+                <span v-show="isJoin">(已报名：<span v-text="data.hasNumber"></span>人)</span>
             </div>
         </div>
         <div class="row">
@@ -64,7 +65,10 @@
             return {}
         },
         props: {
-            data: {}
+            data: {},
+            isJoin: {
+                default: false
+            }
         }
     }
 </script>
@@ -118,7 +122,7 @@
                     border: 1px solid @red;
                     color: @red;
                     border-radius: 50px;
-                    font-size: 0.4rem;
+                    font-size: 12/37.5rem;
                     display: inline-block;
                 }
                 .party-count {

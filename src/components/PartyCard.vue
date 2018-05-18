@@ -13,7 +13,7 @@
             <div class="party-detail">
                 <div class="party-theme" v-text="data.theme"></div>
                 <div class="party-owner">
-                    <span v-text="data.ownerName"></span><span>联合创始人</span>
+                    <span v-text="data.ownerName"></span><span>职业：{{data.ownerIdentity}}</span>
                 </div>
                 <div class="party-money">
                     <img src="../assets/image/money.png"><span>￥{{data.costPer}}/人</span>
@@ -22,7 +22,7 @@
                     <img src="../assets/image/user.png">
                     <span>
                         <span class="has-count">{{data.hasNumber}}</span>/<span class="sub">{{data.partyNumber}}</span>人
-                        <span class="party-indicator">报名中</span>
+                        <span class="party-indicator" v-show="+data.status === 1">报名中</span>
                     </span>
                 </div>
                 <div class="party-time">
@@ -93,6 +93,7 @@
             .party-detail {
                 flex: 1;
                 color: #1b1b1b;
+                font-size: 15/37.5rem;
                 .party-theme {
                     color: #000;
                     overflow: hidden;
@@ -102,15 +103,15 @@
                     /* autoprefixer: off */
                     -webkit-box-orient: vertical;
                     /* autoprefixer: on */
-                    font-size: 0.5rem;
+                    font-size: 0.48rem;
                     line-height: 1.3;
                 }
                 .party-owner {
-                    font-size: 0.46rem;
+                    font-size: 0.44rem;
                     color: #000;
                     span + span {
                         color: #666;
-                        font-size: 0.4rem;
+                        font-size: 0.38rem;
                         margin-left: 0.2rem;
                     }
                 }
@@ -148,7 +149,7 @@
                             border: 1px solid @red;
                             color: @red;
                             border-radius: 50px;
-                            font-size: 0.4rem;
+                            font-size: 12/37.5rem;
                             margin-left: 0.5rem;
                         }
                     }

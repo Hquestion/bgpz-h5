@@ -41,6 +41,12 @@
                 <div class="radio" :class="{checked: payType === 'WEIXIN'}"></div>
             </div>
         </v-touch>
+        <div class="golden-tip">
+            注：您的聚会名额我们会给您保留3分钟，请尽快完成支付！
+        </div>
+        <div class="pay-tip">
+            请在{{showTimeLeft}}内完成支付
+        </div>
         <div class="btn-block">
             <v-touch class="btn" @tap="doPay()">确认支付￥{{projectMoney}}</v-touch>
         </div>
@@ -52,7 +58,9 @@
     import BgWhiteSpace from '../components/BgWhiteSpace';
     import api from '../api';
     import BgAvatar from "../components/BgAvatar";
-    import {Toast} from 'mint-ui';
+    import {Toast, MessageBox} from 'mint-ui';
+    import {fillZero} from "../util";
+    import dayjs from 'dayjs';
 
     const PayTypeMap = {
         'ACCOUNT': 3,
@@ -72,8 +80,17 @@
                 projectMoney: '',
                 accountMoney: '',
                 payType: 'ACCOUNT',
-                adsUrl: ''
+                adsUrl: '',
+                isPaid: false,
+                timeLeft: 3 * 60 * 1000
             };
+        },
+        computed: {
+            showTimeLeft(){
+                let min = Math.floor(this.timeLeft / 1000 / 60);
+                let seconds = Math.floor((this.timeLeft - 60 * 1000 * min) / 1000);
+                return `${fillZero(min)}:${fillZero(seconds)}`;
+            }
         },
         methods: {
             init(){
@@ -86,6 +103,12 @@
                 });
                 if(this.typeName === 'party') {
                     this.initPartyData(this.typeId);
+                    api.getPartyOrderDetail(this.$route.params.id).then(res => {
+                        let endTime = dayjs(res.data.create_time * 1000 + 3 * 60 * 1000);
+                        let now = dayjs();
+                        this.timeLeft = endTime.valueOf() - now.valueOf();
+                        this.startTimer();
+                    });
                 }
             },
             initPartyData(typeId){
@@ -93,6 +116,44 @@
                     this.imgUrl = res.data.ownerAvatar;
                     this.projectName = res.data.theme;
                 });
+            },
+            startTimer(){
+                this.timer = setTimeout(()=>{
+                    this.timeLeft = this.timeLeft - 1000;
+                    if(this.timeLeft > 0) {
+                        this.startTimer();
+                    }else {
+                        clearTimeout(this.timer);
+                        api.getPartyOrderDetail(this.$route.params.id).then(data => {
+                            if(+data.data.status === -1) {
+                                this.isPaid = true;
+                                this.$router.replace({
+                                    name: 'Party'
+                                });
+                            }else {
+                                api.updateOrderStatus(this.$route.params.id, -1).then(data => {
+                                    this.isPaid = true;
+                                    this.$router.replace({
+                                        name: 'Party'
+                                    });
+                                }, () => {
+                                    Toast({
+                                        message: '取消订单失败',
+                                        position: 'bottom'
+                                    });
+                                    this.$router.replace({
+                                        name: 'Party'
+                                    });
+                                });
+                            }
+                        }, ()=>{
+                            this.isPaid = true;
+                            this.$router.replace({
+                                name: 'Party'
+                            });
+                        });
+                    }
+                }, 1000)
             },
             setPayType(type){
                 this.payType = type;
@@ -118,18 +179,20 @@
                 api.pay(param).then((res) => {
                     //支付成功
                     if(PayTypeMap[this.payType] === 3) {
+                        this.isPaid = true;
                         this.$router.push({
                             name: 'PaySuccess',
                             params: {
                                 type: this.$route.params.type,
                                 id: this.$route.params.id
                             }
-                        })
+                        });
                     }else {
                         //todo js调用支付api
                         this.callWxPay(JSON.parse(res.data.text));
                     }
                 }, ()=> {
+                    this.isPaid = false;
                     Toast({
                         message: '支付失败，请重试',
                         position: 'bottom'
@@ -152,7 +215,8 @@
                             position: 'bottom'
                         });
                         //todo 跳转支付成功页面
-                        this.$router.push({
+                        this.isPaid = true;
+                        this.$router.replace({
                             name: 'PaySuccess',
                             params: {
                                 type: this.$route.params.type,
@@ -160,6 +224,7 @@
                             }
                         });
                     } else {
+                        this.isPaid = false;
                         Toast({
                             message: '支付失败',
                             position: 'bottom'
@@ -175,6 +240,41 @@
             this.typeName = typeName;
             this.typeId = typeId;
             this.init();
+        },
+        beforeRouteLeave(to, from, next){
+            if(this.typeName === 'party' && !this.isPaid) {
+                MessageBox.confirm('您确定取消报名吗？', '提示').then(res => {
+                    // 取消订单
+                    api.getPartyOrderDetail(this.$route.params.id).then(data => {
+                        if(+data.data.status === -1) {
+                            this.isPaid = true;
+                            next({
+                                name: 'Party'
+                            });
+                        }else {
+                            api.updateOrderStatus(this.$route.params.id, -1).then(data => {
+                                this.isPaid = true;
+                                next({
+                                    name: 'Party'
+                                });
+                            }, () => {
+                                Toast({
+                                    message: '取消订单失败',
+                                    position: 'bottom'
+                                });
+                                next(false);
+                            });
+                        }
+                    }, ()=>{
+                        this.isPaid = true;
+                        next({name: 'Party'});
+                    });
+                }, ()=> {
+                    next(false);
+                });
+            }else {
+                next();
+            }
         }
     }
 </script>
@@ -205,7 +305,7 @@
                 }
             }
             .project-name {
-                font-size: 22/37.5rem;
+                font-size: 0.5rem;
                 flex: 1;
                 margin-left: 0.3rem;
                 div {
@@ -275,8 +375,20 @@
                 }
             }
         }
+        .golden-tip {
+            padding: 15/37.5rem;
+            font-size: 14/37.5rem;
+            color: @golden;
+            text-align: left;
+        }
+        .pay-tip {
+            text-align: center;
+            color: @text-grey;
+            font-size: 13/37.5rem;
+            padding: 3/37.5rem;
+        }
         .btn-block {
-            margin-top: 0.8rem;
+            margin-top: 0.2rem;
             width: 100%;
             .btn {
                 margin: 0 auto;
@@ -288,6 +400,12 @@
                 color: @white;
                 font-size: 0.5rem;
                 border-radius: 5/37.5rem;
+                span {
+                    font-size: 15/37.5rem;
+                    color: @golden;
+                    display: inline-block;
+                    vertical-align: middle;
+                }
             }
         }
     }

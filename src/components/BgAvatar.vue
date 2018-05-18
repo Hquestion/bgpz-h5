@@ -5,12 +5,11 @@
 </template>
 
 <script>
-    const defaultAvatarUrl = require('../assets/image/default-avatar.png');
     export default {
         name: "BgAvatar",
         props: {
             src: {
-                default: defaultAvatarUrl
+                default: require('../assets/image/default-avatar.png')
             },
             width: {
                 default: `${50/37.5}rem`
@@ -18,7 +17,8 @@
         },
         data(){
             return {
-                avatarUrl: ''
+                avatarUrl: '',
+                defaultAvatarUrl: require('../assets/image/default-avatar.png')
             };
         },
         computed: {
@@ -32,7 +32,7 @@
         },
         methods: {
             onImgError(e){
-                this.avatarUrl = defaultAvatarUrl;
+                this.avatarUrl = this.defaultAvatarUrl;
             }
         },
         watch: {
@@ -40,13 +40,13 @@
                 if(val) {
                     this.avatarUrl = val;
                 }else {
-                    this.avatarUrl = defaultAvatarUrl;
+                    this.avatarUrl = this.defaultAvatarUrl;
                 }
             }
         },
         mounted(){
             if(!this.src) {
-                this.avatarUrl = defaultAvatarUrl;
+                this.avatarUrl = this.defaultAvatarUrl;
             }else {
                 this.avatarUrl = this.src;
             }

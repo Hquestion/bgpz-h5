@@ -4,12 +4,12 @@
         <div class="party-container">
             <party-card :data="partyMeta"></party-card>
         </div>
-        <div class="share-area">
+        <v-touch class="share-area" @tap="doShareParty">
             <div class="golden">须转发到朋友圈后才能完成聚会发布</div>
             <div class="pyq-logo">
                 <img src="../assets/image/pengyouquan.png">
             </div>
-        </div>
+        </v-touch>
     </div>
 </template>
 
@@ -20,6 +20,8 @@
     import api from '../api';
     import share from '../mixins/share';
     import config from '../config';
+
+    import {Toast} from 'mint-ui';
 
     export default {
         name: "ShareParty",
@@ -45,15 +47,25 @@
                         href: `${config.partyDetailUrl}${this.$route.params.id}`,
                         shareImg: this.partyMeta.picTheme,
                         successCb(){
-                            this.$router.push({
-                                name: 'PartyDetail',
-                                params: {
-                                    id: this.partyId
-                                }
+                            api.openParty(this.partyId).then(res => {
+                                this.$router.push({
+                                    name: 'PartyDetail',
+                                    params: {
+                                        id: this.partyId
+                                    }
+                                });
+                            }, ()=>{
+                                Toast({
+                                    message: '开始聚会失败，请分享重试',
+                                    position: 'bottom'
+                                });
                             });
                         }
                     });
                 });
+            },
+            doShareParty(){
+                window.EventBus.$emit('share-visible', true);
             }
         },
         mounted(){
@@ -80,6 +92,7 @@
             left: 0;
             bottom: 0;
             padding-top: 20/37.5rem;
+            border-top: 1px solid #dedede;
             .golden {
                 color: @golden;
                 font-size: 14/37.5rem;
