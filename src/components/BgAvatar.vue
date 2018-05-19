@@ -1,6 +1,7 @@
 <template>
     <div class="bg-avatar" :style="style">
         <img :src="avatarUrl" :style="style" @error="onImgError">
+        <slot></slot>
     </div>
 </template>
 

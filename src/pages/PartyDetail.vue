@@ -9,6 +9,15 @@
             <img :src="partyAds">
         </div>
         <party-info :data="partyMeta"></party-info>
+        <bg-article-title title="聚会成员"></bg-article-title>
+        <div class="member-list">
+            <div v-if="partyMembers && partyMembers.length > 0" class="member-list-items">
+                <party-member-card-new class="member-list-item" v-for="(item, index) in partyMembers" :key="index" :data="item"></party-member-card-new>
+            </div>
+            <div v-else style="text-align: center;padding: 10px;">
+                暂无成员加入聚会
+            </div>
+        </div>
         <bg-article-title title="聚会主题"></bg-article-title>
         <div class="theme-pic">
             <img :src="partyMeta.picTheme">
@@ -27,15 +36,6 @@
                     <div class="food-name"><span>{{index + 1}}</span>{{food.name}} -- {{food.typeName}}</div>
                 </swiper-slide>
             </swiper>
-        </div>
-        <bg-article-title title="聚会成员"></bg-article-title>
-        <div class="member-list">
-            <div v-if="partyMembers && partyMembers.length > 0">
-                <PartyMemberCard v-for="(item, index) in partyMembers" :key="index" :data="item"></PartyMemberCard>
-            </div>
-            <div v-else style="text-align: center;padding: 10px;">
-                暂无成员加入聚会
-            </div>
         </div>
         <footer>
             <div>还缺少:<span class="golden">{{partyMeta.partyNumber - partyMeta.hasNumber}}</span>人<span class="cost">报名费:<span class="red">￥{{partyMeta.costPer}}/人起</span></span></div>
@@ -58,10 +58,12 @@
 
     import share from '../mixins/share';
     import config from '../config';
+    import PartyMemberCardNew from "../components/PartyMemberCardNew";
     export default {
         name: "PartyDetail",
         mixins: [share],
         components: {
+            PartyMemberCardNew,
             PartyMemberCard,
             BgHeader,
             PartyInfo,
@@ -224,6 +226,19 @@
                         text-align: center;
                         margin-right: 5/37.5rem;
                     }
+                }
+            }
+        }
+        .member-list {
+            width: 100vw;
+            overflow: auto;
+            padding: 10/37.5rem 0;
+            .member-list-items {
+                display: inline;
+                white-space: nowrap;
+                .member-list-item {
+                    width: 33.33vw;
+                    display: inline-block;
                 }
             }
         }
