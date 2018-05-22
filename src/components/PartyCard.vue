@@ -1,5 +1,5 @@
 <template>
-    <div class="party-card">
+    <div class="party-card" :class="{'to-join': isRunning, 'join-end': isEnd, 'finish': isFinish}">
         <div class="party-img">
             <img :src="data.picTheme">
         </div>
@@ -13,7 +13,7 @@
             <div class="party-detail">
                 <div class="party-theme" v-text="data.theme"></div>
                 <div class="party-owner">
-                    <span v-text="data.ownerName"></span><span>职业：{{data.ownerIdentity}}</span>
+                    <span v-text="data.ownerName"></span><span>职业：{{data.ownerIdentity || '无'}}</span>
                 </div>
                 <div class="party-money">
                     <img src="../assets/image/money.png"><span>￥{{data.costPer}}/人</span>
@@ -45,6 +45,17 @@
         mixins: [filter],
         props: {
             data: {}
+        },
+        computed: {
+            isRunning(){
+                return +this.data.status === 1 && this.data.partyNumber - this.data.hasNumber > 0
+            },
+            isEnd(){
+                return this.data.partyNumber - this.data.hasNumber <= 0 && +this.data.status === 1
+            },
+            isFinish(){
+                return +this.data.status === 3;
+            }
         }
     }
 </script>
@@ -122,7 +133,7 @@
                     justify-content: flex-start;
                     align-items: flex-start;
                     img {
-                        margin-top: 0.1rem;
+                        margin-top: 0.15rem;
                     }
                     span {
                         flex: 1;
@@ -135,7 +146,7 @@
                     margin-top: 0.1rem;
                     align-items: flex-start;
                     img {
-                        margin-top: 0.1rem;
+                        margin-top: 0.15rem;
                     }
                     & > span {
                         flex: 1;
@@ -160,7 +171,7 @@
                     margin-top: 0.1rem;
                     align-items: flex-start;
                     img {
-                        margin-top: 0.1rem;
+                        margin-top: 0.15rem;
                     }
                     span {
                         flex: 1;
@@ -173,13 +184,37 @@
                     margin-top: 0.1rem;
                     align-items: flex-start;
                     img {
-                        margin-top: 0.1rem;
+                        margin-top: 0.15rem;
                     }
                     span {
                         flex: 1;
                         margin-left: 0.2rem;
                     }
                 }
+            }
+        }
+        &.to-join {
+            .party-footer {
+                background-image: ~"url('../assets/image/label-join-in.png')";
+                background-size: 90/37.5rem 90/37.5rem;
+                background-position: calc(100% - 0.4rem) 80/37.5rem;
+                background-repeat: no-repeat;
+            }
+        }
+        &.join-end {
+            .party-footer {
+                background-image: ~"url('../assets/image/label-to-begin.png')";
+                background-size: 90/37.5rem 90/37.5rem;
+                background-position: calc(100% - 0.4rem) 80/37.5rem;
+                background-repeat: no-repeat;
+            }
+        }
+        &.finish {
+            .party-footer {
+                background-image: ~"url('../assets/image/label-finish.png')";
+                background-size: 90/37.5rem 90/37.5rem;
+                background-position: calc(100% - 0.4rem) 80/37.5rem;
+                background-repeat: no-repeat;
             }
         }
     }

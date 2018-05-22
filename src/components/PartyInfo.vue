@@ -10,7 +10,7 @@
                     <span>{{data.ownerName}}</span><span>聚主</span>
                 </div>
                 <div>
-                    职业：{{data.ownerIdentity}}
+                    职业：{{data.ownerIdentity || '无'}}
                 </div>
             </div>
             <div class="party-status" v-show="!isJoin">

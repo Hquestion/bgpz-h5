@@ -76,7 +76,7 @@
         <div class="party-desc">
             <bg-cell column="true">
                 <div slot="left">聚会说明</div>
-                <textarea slot="middle" placeholder="请输入50-200字的主题说明" v-model="model.description"></textarea>
+                <textarea slot="middle" placeholder="请输入50-500字的主题说明" v-model="model.description"></textarea>
             </bg-cell>
             <bg-cell column="true" :reverse="false">
                 <div slot="left">聚会宣传图片<span class="golden">（请上传4-6张）</span></div>
@@ -269,7 +269,7 @@
                     {method: 'isNotEmpty', message: '请选择时间', param: [this.model.time]},
                     {method: 'isNotEmpty', message: '请选择地址', param: [this.model.address]},
                     {method: 'isNotEmpty', message: '请选择聚会场景图片', param: [this.model.selectedBgImg]},
-                    {method: 'isMatchLength', message: '请输入50-200字的聚会说明', param: [this.model.description, 50, 200]},
+                    {method: 'isMatchLength', message: '请输入50-500字的聚会说明', param: [this.model.description, 50, 500]},
                     {method: 'isMatchLength', message: '请添加4-6张聚会图片', param: [this.model.partyPoster, 4, 6]}
                 ];
                 if(form.validate(validationList)) {

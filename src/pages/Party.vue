@@ -25,13 +25,20 @@
         <div class="party-search">
             <bg-search @search="doSearch" v-model="content"></bg-search>
         </div>
+        <div class="party-status-tab">
+            <div class="party-tab-item" :class="{active: currentStatus === 1}" @click="setStatus(1)">进行中</div>
+            <div class="party-tab-item" :class="{active: currentStatus === 3}" @click="setStatus(3)">已结束</div>
+        </div>
         <div class="party-list">
             <mt-loadmore :top-method="refresh" ref="loadmore">
-                <ul>
+                <ul v-show="partyList.length > 0">
                     <v-touch tag="li" v-for="(party, index) in partyList" :key="party.id" @tap="navigateToDetail(party)">
                         <party-card :data="party"></party-card>
                     </v-touch>
                 </ul>
+                <div class="no-content" v-show="partyList.length === 0" style="text-align: center;padding-top: 50px;">
+                    暂无聚会
+                </div>
             </mt-loadmore>
         </div>
     </div>
@@ -46,7 +53,6 @@
     import filter from '../mixins/filter';
 
     const pageSize = 999;
-    const status = 1;
     const type = 1;
     export default {
         name: "Party",
@@ -56,7 +62,8 @@
                 allLoaded: false,
                 partyList: [],
                 pageIndex: 1,
-                content: ''
+                content: '',
+                currentStatus: 1,
             };
         },
         components: {
@@ -67,7 +74,7 @@
         },
         methods: {
             init(){
-                api.getPartyList(this.pageIndex, pageSize, status, type, this.content).then(res => {
+                api.getPartyList(this.pageIndex, pageSize, this.currentStatus, type, this.content).then(res => {
                     this.partyList = res.data && res.data.list || [];
                 });
             },
@@ -76,17 +83,21 @@
                     name: 'CreateParty'
                 });
             },
+            setStatus(status){
+                this.currentStatus = status;
+                this.init();
+            },
             refresh(){
                 this.pageIndex = 1;
-                api.getPartyList(this.pageIndex, pageSize, status, type, this.content).then(res => {
-                    this.partyList = res.data.list;
+                api.getPartyList(this.pageIndex, pageSize, this.currentStatus, type, this.content).then(res => {
+                    this.partyList = res.data && res.data.list || [];
                     this.$refs.loadmore.onTopLoaded();
                 });
             },
             loadMore(){
                 this.pageIndex++;
-                api.getPartyList(this.pageIndex, pageSize, status, type, this.content).then(res => {
-                    this.partyList = this.partyList.concat(res.data.list);
+                api.getPartyList(this.pageIndex, pageSize, this.currentStatus, type, this.content).then(res => {
+                    this.partyList = this.partyList.concat(res.data && res.data.list || []);
                     this.$refs.loadmore.onBottomLoaded();
                     if(res.isLast === 1) {
                         this.allLoaded = true;
@@ -152,13 +163,37 @@
         .party-search {
             padding: 0.2rem 0.5rem 0;
         }
+        .party-status-tab {
+            width: 100vw;
+            height: 50/37.5rem;
+            line-height: 50/37.5rem;
+            background: @white;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            text-align: center;
+            border-bottom: 1px solid #dedede;
+            font-size: 14/37.5rem;
+            .party-tab-item {
+                color: @dark;
+                flex: 1;
+                &.active {
+                    color: @red;
+                    border-bottom: 3/37.5rem solid @red;
+                }
+            }
+        }
         .party-list {
-            height: calc(100vh - 50px - 2.6rem);
+            height: calc(100vh - 50px - 2.6rem - 1.33333rem);
+            overflow: auto;
             ul {
                 padding: 15/37.5rem;
                 li + li {
                     margin-top: 10/37.5rem;
                 }
+            }
+            .no-content {
+                height: calc(100vh - 50px - 2.6rem - 1.33333rem);
             }
         }
     }

@@ -15,6 +15,7 @@
 
 <script>
     import md5 from 'js-md5';
+    import { Indicator, Toast } from 'mint-ui';
     const Base64 = require('js-base64').Base64;
     export default {
         name: "BgImagePicker",
@@ -53,13 +54,27 @@
             },
             onPickImg(e){
                 let imgs = Array.from(e.target.files);
+                let loaded = 0;
+                Indicator.open({
+                    text: '正在上传图片...',
+                    spinnerType: 'fading-circle'
+                });
                 imgs.slice(0, 6).forEach(item => {
                     ((data) => {
                         this.uploadImg(data).then(res => {
+                            loaded++;
                             this.userPicked.push(res);
                             this.$nextTick(()=>{
                                 this.$emit('img-change', this.userPicked);
                             });
+                            if(loaded === imgs.slice(0, 6).length) {
+                                Indicator.close();
+                            }
+                        }, ()=>{
+                            loaded++;
+                            if(loaded === imgs.slice(0, 6).length) {
+                                Indicator.close();
+                            }
                         });
                     })(item);
                 });
@@ -93,7 +108,6 @@
                     request.onload = function(e) {
                         if (request.status === 200) {
                             let responseData = JSON.parse(request.response);
-                            console.log(responseData)
                             let picUrl = "http://eightplate.b0.upaiyun.com" + responseData.url;
                             resolve({
                                 img: picUrl,

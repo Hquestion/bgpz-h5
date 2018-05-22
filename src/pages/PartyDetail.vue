@@ -22,8 +22,8 @@
         <div class="theme-pic">
             <img :src="partyMeta.picTheme">
         </div>
-        <div class="party-desc">
-            {{partyMeta.description}}
+        <div class="party-desc" v-html="descHtml">
+
         </div>
         <div class="party-img" v-for="(pic, index) in partyMeta.picContent" :key="index">
             <img class="poster-img" :src="pic && pic.img || pic">
@@ -38,7 +38,14 @@
             </swiper>
         </div>
         <footer>
-            <div>还缺少:<span class="golden">{{partyMeta.partyNumber - partyMeta.hasNumber}}</span>人<span class="cost">报名费:<span class="red">￥{{partyMeta.costPer}}/人起</span></span></div>
+            <!--<div>还缺少:<span class="golden">{{partyMeta.partyNumber - partyMeta.hasNumber}}</span>人<span class="cost">报名费:<span class="red">￥{{partyMeta.costPer}}/人起</span></span></div>-->
+            <div class="icon-btns">
+                <a href="tel:4008-718-181"><img src="../assets/image/kefu.png"></a>
+                <a @click="share"><img src="../assets/image/share.png"/></a>
+            </div>
+            <div class="price-block">
+                {{partyMeta.costPer}}元/人起
+            </div>
             <v-touch class="btn" @tap="join()" v-show="+partyMeta.status === 1 && partyMeta.partyNumber - partyMeta.hasNumber > 0">立即报名</v-touch>
             <v-touch class="btn disable" v-show="partyMeta.partyNumber - partyMeta.hasNumber <= 0 && +partyMeta.status === 1">名额已满</v-touch>
             <v-touch class="btn disable" v-show="+partyMeta.status !== 1">已结束报名</v-touch>
@@ -113,6 +120,9 @@
                     result = result.concat(item.typeList);
                 });
                 return result;
+            },
+            descHtml(){
+                return this.partyMeta.description && this.partyMeta.description.replace(/\n/g, '<br>');
             }
         },
         methods: {
@@ -172,7 +182,6 @@
             padding: 0 15/37.5rem;
             font-size: 16/37.5rem;
             line-height: 1.8;
-            text-indent: 32/37.5rem;
         }
         .theme-pic {
             img {
@@ -253,21 +262,36 @@
             align-items: center;
             background: #fff;
             border-top: 1px solid #dedede;
-            padding: 0 15/37.5rem;
+            padding: 0;
             z-index: 5;
+            .icon-btns {
+                width: 40vw;
+                a, img {
+                    margin-left: 5/37.5rem;
+                    display: inline-block;
+                    vertical-align: middle;
+                }
+            }
+            .price-block {
+                width: 30vw;
+                height: 50/37.5rem;
+                line-height: 50/37.5rem;
+                background: @golden;
+                text-align: center;
+                color: #fff;
+            }
             .golden{
                 color: @golden;
                 font-size: 0.6rem;
             }
             .btn {
                 background: @red;
-                width: 100/37.5rem;
-                height: 40/37.5rem;
-                line-height: 40/37.5rem;
+                width: 30vw;
+                height: 50/37.5rem;
+                line-height: 50/37.5rem;
                 text-align: center;
                 color: @white;
-                font-size: 0.5rem;
-                border-radius: 5/37.5rem;
+                font-size: 16/37.5rem;
                 &.disable {
                     background: @text-grey;
                 }
