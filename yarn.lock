@@ -5030,6 +5030,10 @@ vm-browserify@0.0.4:
   dependencies:
     indexof "0.0.1"
 
+vodal@^2.3.3:
+  version "2.3.3"
+  resolved "https://registry.yarnpkg.com/vodal/-/vodal-2.3.3.tgz#7ed3e85b4eb48d984734edb43cc44a6241b11397"
+
 vue-awesome-swiper@^3.1.3:
   version "3.1.3"
   resolved "https://registry.yarnpkg.com/vue-awesome-swiper/-/vue-awesome-swiper-3.1.3.tgz#05500b501ffb3fec9bf7eb9985bcf4ae8360ed9e"

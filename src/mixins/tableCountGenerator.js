@@ -13,7 +13,7 @@ export default {
             });
             let defaultTableIndex = tableList.findIndex(item => +item === +defaultValue[0]) || 0;
             let countRange = this.tableCountRule[tableList[defaultTableIndex]].split('-');
-            let defaultCountList = range(+countRange[0], +countRange[1]);
+            let defaultCountList = range(+countRange[0], +countRange[1]).reverse();
             let defaultCountIndex = defaultCountList.findIndex(item => item === +defaultValue[1]) || 0;
             return [
                 {values: tableList.map(item => `${item}桌`), defaultIndex: defaultTableIndex, flex: 1},
@@ -23,7 +23,7 @@ export default {
         adjustTableCount(picker, value){
             if(value[0]) {
                 let countRange = this.tableCountRule[parseInt(value[0])].split('-');
-                let countList = range(+countRange[0], +countRange[1]);
+                let countList = range(+countRange[0], +countRange[1]).reverse();
                 picker.setSlotValues(1, countList.map(item => `${item}人`));
             }
         }

@@ -180,7 +180,7 @@
                     //支付成功
                     if(PayTypeMap[this.payType] === 3) {
                         this.isPaid = true;
-                        this.$router.push({
+                        this.$router.replace({
                             name: 'PaySuccess',
                             params: {
                                 type: this.$route.params.type,

@@ -147,7 +147,18 @@ export default {
         });
     },
     getUserInfo(){
-        return httpService.postForm('custom/user/getInfo');
+        if(this.getUserInfo.caches) {
+            return new Promise((resolve) => {
+                resolve(this.getUserInfo.caches);
+            });
+        }else {
+            return new Promise((resolve, reject) => {
+                httpService.postForm('custom/user/getInfo').then(res => {
+                    this.getUserInfo.caches = res;
+                    resolve(res);
+                }, reject);
+            });
+        }
     },
     getPartyImages(pageIndex, pageSize){
         return httpService.postForm('custom/party/backgroundList', {
@@ -214,6 +225,19 @@ export default {
     getPartyOrderDetail(orderId){
         return httpService.postForm('custom/party/selUserParty', {
             id: orderId
+        });
+    },
+    getPartyCommentList(partyId, pageIndex, pageSize){
+        return httpService.get(config.apartHttpServerUrl + 'api/Party/GetPartyCommentList', {
+            partyid: partyId,
+            page: pageIndex,
+            rows: pageSize
+        }, false, true);
+    },
+    sendComment(partyId, content = ''){
+        return httpService.postForm('custom/party/applycomment', {
+            party_id: partyId,
+            cmt_content: content
         });
     }
 };

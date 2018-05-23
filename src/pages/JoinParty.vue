@@ -76,7 +76,7 @@
                 let result = [];
                 if(this.partyMeta && this.partyMeta.costPer) {
                     for(let i =0; i < 4; i++) {
-                        result.push(+this.partyMeta.costPer + 50 * i);
+                        result.push(+this.partyMeta.costPer + 100 * i);
                     }
                 }
                 return result;

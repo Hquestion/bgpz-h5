@@ -1,5 +1,5 @@
 <template>
-    <v-touch class="bg-button" :class="[size, {block: block}]" @tap="onBtnTap">
+    <v-touch class="bg-button" :class="[size, {block: block}, type]" @tap="onBtnTap">
         <slot></slot>
     </v-touch>
 </template>
@@ -13,6 +13,9 @@
             },
             block: {
                 default: false
+            },
+            type: {
+                default: 'success'
             }
         },
         methods: {
@@ -27,14 +30,21 @@
     @import "../assets/less/variable";
     .bg-button {
         margin: 0 auto;
-        background: @red;
         width: 80%;
         height: 55/37.5rem;
         line-height: 55/37.5rem;
         text-align: center;
-        color: @white;
         font-size: 0.5rem;
         border-radius: 5/37.5rem;
+        &.success {
+            background: @red;
+            color: @white;
+        }
+        &.default {
+            background: @white;
+            border: 1px solid #dedede;
+            color: @dark;
+        }
         &.block {
 
         }

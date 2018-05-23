@@ -1,5 +1,5 @@
 <template>
-    <div class="party-info">
+    <div class="party-info" :class="{'to-join': isRunning, 'join-end': isEnd, 'finish': isFinish}">
         <div class="party-theme">{{data.theme}}</div>
         <div class="party-owner">
             <div class="avatar">
@@ -13,12 +13,12 @@
                     职业：{{data.ownerIdentity || '无'}}
                 </div>
             </div>
-            <div class="party-status" v-show="!isJoin">
-                <div class="indicator" v-if="data.status === 1">报名中</div>
-                <div class="party-count">
-                    已报名：<span v-text="data.hasNumber"></span>人
-                </div>
-            </div>
+            <!--<div class="party-status" v-show="!isJoin">-->
+                <!--<div class="indicator" v-if="data.status === 1">报名中</div>-->
+                <!--<div class="party-count">-->
+                    <!--已报名：<span v-text="data.hasNumber"></span>人-->
+                <!--</div>-->
+            <!--</div>-->
         </div>
         <div class="row">
             <div class="label">聚会费用</div>
@@ -69,6 +69,17 @@
             isJoin: {
                 default: false
             }
+        },
+        computed: {
+            isRunning(){
+                return +this.data.status === 1 && this.data.partyNumber - this.data.hasNumber > 0
+            },
+            isEnd(){
+                return (this.data.partyNumber - this.data.hasNumber <= 0 && +this.data.status === 1) || +this.data.status === 2;
+            },
+            isFinish(){
+                return +this.data.status === 3;
+            }
         }
     }
 </script>
@@ -108,10 +119,13 @@
                         font-size: 0.4rem;
                         border-radius: 3/37.5rem;
                         margin-left: 0.1rem;
+                        position: relative;
+                        top: -0.05rem;
                     }
                 }
                 div:nth-child(2) {
                     color: @text-grey;
+                    margin-top: 0.1rem;
                 }
             }
             .party-status {
@@ -148,6 +162,24 @@
                     color: @red;
                 }
             }
+        }
+        &.to-join {
+            background-image: ~"url('../assets/image/label-join-in.png')";
+            background-size: 90/37.5rem 90/37.5rem;
+            background-position: calc(100% - 0.4rem) 120/37.5rem;
+            background-repeat: no-repeat;
+        }
+        &.join-end {
+            background-image: ~"url('../assets/image/label-to-begin.png')";
+            background-size: 90/37.5rem 90/37.5rem;
+            background-position: calc(100% - 0.4rem) 120/37.5rem;
+            background-repeat: no-repeat;
+        }
+        &.finish {
+            background-image: ~"url('../assets/image/label-finish.png')";
+            background-size: 90/37.5rem 90/37.5rem;
+            background-position: calc(100% - 0.4rem) 120/37.5rem;
+            background-repeat: no-repeat;
         }
     }
 </style>

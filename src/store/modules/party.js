@@ -16,7 +16,9 @@ const state = {
         partyTableNum: 1,
         selectedBgImg: '',
         selectedBgPageIndex: 1,
-        description: ''
+        description: '',
+        partyVideo: [],
+        localBgImg: ''
     }
 };
 

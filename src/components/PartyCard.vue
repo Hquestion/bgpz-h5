@@ -1,7 +1,7 @@
 <template>
     <div class="party-card" :class="{'to-join': isRunning, 'join-end': isEnd, 'finish': isFinish}">
         <div class="party-img">
-            <img :src="data.picTheme">
+            <img :src="data.picTheme" @click.prevent>
         </div>
         <div class="party-footer">
             <div class="avatar">
@@ -19,10 +19,10 @@
                     <img src="../assets/image/money.png"><span>￥{{data.costPer}}/人</span>
                 </div>
                 <div class="party-count">
-                    <img src="../assets/image/user.png">
+                    <img src="../assets/image/user.png" @click.prevent>
                     <span>
                         <span class="has-count">{{data.hasNumber}}</span>/<span class="sub">{{data.partyNumber}}</span>人
-                        <span class="party-indicator" v-show="+data.status === 1">报名中</span>
+                        <!--<span class="party-indicator" v-show="+data.status === 1">报名中</span>-->
                     </span>
                 </div>
                 <div class="party-time">
@@ -51,7 +51,7 @@
                 return +this.data.status === 1 && this.data.partyNumber - this.data.hasNumber > 0
             },
             isEnd(){
-                return this.data.partyNumber - this.data.hasNumber <= 0 && +this.data.status === 1
+                return (this.data.partyNumber - this.data.hasNumber <= 0 && +this.data.status === 1) || +this.data.status === 2
             },
             isFinish(){
                 return +this.data.status === 3;
@@ -131,10 +131,7 @@
                     margin-top: 0.6rem;
                     display: flex;
                     justify-content: flex-start;
-                    align-items: flex-start;
-                    img {
-                        margin-top: 0.15rem;
-                    }
+                    align-items: center;
                     span {
                         flex: 1;
                         margin-left: 0.2rem;
@@ -144,10 +141,7 @@
                     display: flex;
                     justify-content: flex-start;
                     margin-top: 0.1rem;
-                    align-items: flex-start;
-                    img {
-                        margin-top: 0.15rem;
-                    }
+                    align-items: center;
                     & > span {
                         flex: 1;
                         margin-left: 0.2rem;
@@ -169,10 +163,7 @@
                     display: flex;
                     justify-content: flex-start;
                     margin-top: 0.1rem;
-                    align-items: flex-start;
-                    img {
-                        margin-top: 0.15rem;
-                    }
+                    align-items: center;
                     span {
                         flex: 1;
                         margin-left: 0.2rem;
@@ -182,10 +173,7 @@
                     display: flex;
                     justify-content: flex-start;
                     margin-top: 0.1rem;
-                    align-items: flex-start;
-                    img {
-                        margin-top: 0.15rem;
-                    }
+                    align-items: center;
                     span {
                         flex: 1;
                         margin-left: 0.2rem;

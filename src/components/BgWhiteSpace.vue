@@ -9,7 +9,7 @@
         name: "BgWhiteSpace",
         props: {
             height: {
-                default: '0.2rem'
+                default: 10/37.5 + 'rem'
             },
             background: {
                 default: '#f2f2f2'

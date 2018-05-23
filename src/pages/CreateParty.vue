@@ -63,14 +63,26 @@
         <bg-article-title title="选择背景图"></bg-article-title>
         <div class="party-bg-image-block">
             <div class="bg-images">
+                <div class="user-local-image" v-show="!!model.localBgImg">
+                    <v-touch class="local-img-box" @tap="selectBgImg(-1)">
+                        <img :src="model.localBgImg">
+                        <div class="check-radio" :class="{checked: model.selectedBgImg === model.localBgImg}"></div>
+                    </v-touch>
+                </div>
                 <v-touch class="bg-images-item" v-for="(item, index) in partyBgList" :key="index" @tap="selectBgImg(index)">
                     <img :src="item">
                     <div class="check-radio" :class="{checked: model.selectedBgImg === item}"></div>
                 </v-touch>
             </div>
-            <v-touch class="change-list" @tap="changeBgImg">
-                <span>换一组</span><img src="../assets/image/changeicon.png">
-            </v-touch>
+            <div class="change-bg-btns">
+                <v-touch class="user-upload-file">
+                    <span>上传本地图片></span>
+                    <input type="file" accept="image/*" @change="onPickImg">
+                </v-touch>
+                <v-touch class="change-list" @tap="changeBgImg">
+                    <span>换一组</span><img src="../assets/image/changeicon.png">
+                </v-touch>
+            </div>
         </div>
         <bg-article-title title="主题说明"></bg-article-title>
         <div class="party-desc">
@@ -79,8 +91,12 @@
                 <textarea slot="middle" placeholder="请输入50-500字的主题说明" v-model="model.description"></textarea>
             </bg-cell>
             <bg-cell column="true" :reverse="false">
-                <div slot="left">聚会宣传图片<span class="golden">（请上传4-6张）</span></div>
+                <div slot="left">聚会宣传图片<span class="golden">（请上传4张以上）</span></div>
                 <bg-image-picker slot="middle" v-model="model.partyPoster"></bg-image-picker>
+            </bg-cell>
+            <bg-cell column="true" :reverse="false">
+                <div slot="left">聚会宣传视频<span class="golden">（请上传5M大小以内的视频）</span></div>
+                <bg-video-picker slot="middle" v-model="model.partyVideo"></bg-video-picker>
             </bg-cell>
         </div>
         <div class="decalare">
@@ -106,6 +122,7 @@
     import tableCountGenerator from '../mixins/tableCountGenerator';
     import dinnerFeeGenerator from '../mixins/dinnerFeePickerGenerator';
     import filter from '../mixins/filter';
+    import uploadImg from '../mixins/uploadImg';
     import {fillZero} from "../util";
     import form from '../util/form';
 
@@ -114,11 +131,12 @@
     import BgRadio from "../components/BgRadio";
     import BgAvatar from "../components/BgAvatar";
     import BgImagePicker from "../components/BgImagePicker";
+    import BgVideoPicker from "../components/BgVideoPicker";
 
     import {mapActions} from 'vuex';
     import {SET_PARTY_META} from "../store/modules/party";
 
-    import {Toast} from 'mint-ui';
+    import {Toast, Indicator} from 'mint-ui';
 
     const party_bg_page_size = 6;
     const addressTypeMap = {
@@ -127,7 +145,7 @@
     };
     export default {
         name: "CreateParty",
-        mixins: [timePickerGenerator, tableCountGenerator, filter, dinnerFeeGenerator],
+        mixins: [timePickerGenerator, tableCountGenerator, filter, dinnerFeeGenerator, uploadImg],
         components: {
             BgImagePicker,
             BgAvatar,
@@ -138,7 +156,8 @@
             BgInput,
             BgCell,
             BgArticleTitle,
-            BgHeader
+            BgHeader,
+            BgVideoPicker
         },
         data(){
             return {
@@ -241,8 +260,13 @@
                 this.model.partyNumber = parseInt(value[1]);
             },
             selectBgImg(index){
-                this.model.selectedBgPageIndex = this.partyBgPageIndex;
-                this.model.selectedBgImg = this.partyBgList[index];
+                if(index === -1) {
+                    this.model.selectedBgImg = this.model.localBgImg;
+                    this.model.selectedBgPageIndex = -1;
+                }else {
+                    this.model.selectedBgPageIndex = this.partyBgPageIndex;
+                    this.model.selectedBgImg = this.partyBgList[index];
+                }
             },
             chooseAddress(){
                 this.$router.push({
@@ -263,6 +287,26 @@
             onConfirmDinnerFee(value){
                 this.model.feePer = value[0].value;
             },
+            onPickImg(e){
+                let imgs = Array.from(e.target.files);
+                if(imgs.length === 0) {
+                    return;
+                }
+                Indicator.open({
+                    text: '正在上传图片...',
+                    spinnerType: 'fading-circle'
+                });
+                this.uploadImg(imgs[0]).then(res => {
+                    this.model.localBgImg = res.img;
+                    Indicator.close();
+                }, ()=>{
+                    Toast({
+                        message: '上传图片失败，请重试',
+                        position: 'bottom'
+                    });
+                    Indicator.close();
+                });
+            },
             nextStep(){
                 let validationList = [
                     {method: 'isNotEmpty', message: '请输入聚会主题', param: [this.model.theme]},
@@ -270,7 +314,7 @@
                     {method: 'isNotEmpty', message: '请选择地址', param: [this.model.address]},
                     {method: 'isNotEmpty', message: '请选择聚会场景图片', param: [this.model.selectedBgImg]},
                     {method: 'isMatchLength', message: '请输入50-500字的聚会说明', param: [this.model.description, 50, 500]},
-                    {method: 'isMatchLength', message: '请添加4-6张聚会图片', param: [this.model.partyPoster, 4, 6]}
+                    {method: 'isMatchLength', message: '请添加4张以上聚会图片', param: [this.model.partyPoster, 4, 100]}
                 ];
                 if(form.validate(validationList)) {
                     //发布聚会
@@ -289,7 +333,8 @@
                         cost: this.model.feePer,
                         descOne: '1',
                         descTwo: '2',
-                        descThree: '3'
+                        descThree: '3',
+                        videoContent: this.model.partyVideo
                     };
                     api.releaseParty(releaseParam).then(res => {
                         this.$router.push({
@@ -331,9 +376,34 @@
         }
         .party-bg-image-block {
             background-color: #fff;
+            .change-bg-btns {
+                font-size: 14/37.5rem;
+                width: 100vw;
+                height: 50/37.5rem;
+                line-height: 50/37.5rem;
+                display: flex;
+                justify-content: space-between;
+                .user-upload-file {
+                    display: inline-block;
+                    width: 50vw;
+                    height: 50/37.5rem;
+                    padding-left: 15/37.5rem;
+                    position: relative;
+                    color: #444;
+                    input {
+                        position: absolute;
+                        opacity: 0;
+                        width: 100%;
+                        height: 100%;
+                        left: 0;
+                        top: 0;
+                    }
+                }
+            }
             .change-list {
-                padding: 15/37.5rem;
-                text-align: center;
+                width: 50vw;
+                padding-right: 15/37.5rem;
+                text-align: right;
                 span {
                     display: inline-block;
                     vertical-align: middle;
@@ -349,12 +419,35 @@
                 align-items: center;
                 flex-wrap: wrap;
                 padding: 0 15/37.5rem;
+                .local-img-box {
+                    width: calc(50% - 0.13333rem);
+                    height: auto;
+                    position: relative;
+                    margin: 15/37.5rem auto 0;
+                    img {
+                        width: 100%;
+                        display: block;
+                    }
+                    .check-radio {
+                        position: absolute;
+                        top: 3/37.5rem;
+                        right: 3/37.5rem;
+                        width: 20/37.5rem;
+                        height: 20/37.5rem;
+                        background-image: ~"url(../assets/image/chosed-w.png)";
+                        z-index: 2;
+                        background-size: 100% 100%;
+                        &.checked {
+                            background-image: ~"url(../assets/image/chose.png)";
+                        }
+                    }
+                }
                 .bg-images-item {
                     width: calc(50% - 0.13333rem);
                     height: auto;
                     margin-top: 15/37.5rem;
                     position: relative;
-                    &:nth-child(2n + 2) {
+                    &:nth-child(2n + 1) {
                         margin-left: 10/37.5rem;
                     }
                     img {
