@@ -16,6 +16,8 @@
 <script>
     import { Indicator, Toast } from 'mint-ui';
     import uploadImg from '../mixins/uploadImg';
+    const indicate = Indicator;
+    const t = Toast;
     export default {
         name: "BgImagePicker",
         mixins: [uploadImg],
@@ -58,7 +60,7 @@
                     return;
                 }
                 let loaded = 0;
-                Indicator.open({
+                indicate.open({
                     text: '正在上传图片...',
                     spinnerType: 'fading-circle'
                 });
@@ -71,12 +73,12 @@
                                 this.$emit('img-change', this.userPicked);
                             });
                             if(loaded === imgs.slice(0).length) {
-                                Indicator.close();
+                                indicate.close();
                             }
                         }, ()=>{
                             loaded++;
                             if(loaded === imgs.slice(0).length) {
-                                Indicator.close();
+                                indicate.close();
                             }
                         });
                     })(item);

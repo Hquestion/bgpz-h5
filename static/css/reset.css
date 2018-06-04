@@ -1,5 +1,5 @@
 body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,button,textarea,p,blockquote,th,td, footer,header { margin:0; padding:0; box-sizing: border-box}
-body { background:#fff; color:#1b1b1b; font-family: 微软雅黑, Verdana, Arial, Helvetica, sans-serif; }
+body { background:#fff; color:#1b1b1b; font-family: 微软雅黑, Verdana, Arial, Helvetica, sans-serif;}
 td,th,caption { font-size:14px; }
 h1, h2, h3, h4, h5, h6 { font-weight:normal; font-size:100%; }
 address, caption, cite, code, dfn, em, strong, th, var { font-style:normal; font-weight:normal;}
@@ -10,6 +10,9 @@ ol,ul,li { list-style:none; }
 input, textarea, select, button { font-family:微软雅黑,Verdana,Helvetica,Arial,sans-serif; }
 table { border-collapse:collapse; }
 html {overflow-y: scroll;}
+video {
+    background: #000;
+}
 
 .clearfix:after {content: "\20"; display: block; height:0; clear:both; visibility: hidden;}
 .clearfix { *zoom:1; }
@@ -17,4 +20,79 @@ html {overflow-y: scroll;}
 .mint-switch-input:checked+.mint-switch-core {
     border-color: #44DB5E !important;
     background-color: #44DB5E !important;
+}
+
+.party-uptodate-dialog {
+    font-size: 0.4rem;
+}
+.party-uptodate-dialog .vodal-dialog {
+    padding: 0.133rem 0.4rem;
+    border-radius: 10px;
+}
+.party-uptodate-dialog .vodal-dialog .title {
+    font-size: 0.44rem;
+    text-align: center;
+    color: #aaa;
+}
+.party-uptodate-dialog .content {
+    margin-top: 0.267rem;
+}
+.party-uptodate-dialog .content .theme {
+    color: #AA9069;
+    font-size: 0.39rem;
+    line-height: 1.5;
+}
+.party-uptodate-dialog .content .flex-block {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    margin-top: 0.15rem;
+}
+.party-uptodate-dialog .content .flex-block .flex-block {
+    display: flex;
+    width: 50%;
+    margin-top: 0;
+}
+.party-uptodate-dialog .content .party-info-container {
+    padding: 10px;
+    background: #f2f2f2;
+    margin-top: 0.13333rem;
+    border-radius: 5px;
+    font-size: 0.36rem;
+}
+.party-uptodate-dialog .content .flex-block .label {
+    color: #666;
+}
+.party-uptodate-dialog .content .flex-block .label-content {
+    flex: 1;
+    margin-left: 0.2rem;
+}
+.party-uptodate-dialog .content .flex-block .label-content span{
+    font-size: 0.3rem;
+}
+.party-uptodate-dialog .content .flex-block .label-content .red {
+    font-size: 0.4rem;
+    color: #E70022;
+}
+.party-uptodate-dialog .content .buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0.4rem;
+}
+.party-uptodate-dialog .content .buttons .btn {
+    width: 48%;
+    height: 1.1rem;
+    line-height: 1.1rem;
+    text-align: center;
+    border-radius: 5px;
+    font-size: 0.42rem;
+}
+.party-uptodate-dialog .content .buttons .btn.btn-default {
+    background: #fff;
+    border: 1px solid #dedede;
+}
+.party-uptodate-dialog .content .buttons .btn.btn-success {
+    background: #E70022;
+    color: #fff;
 }

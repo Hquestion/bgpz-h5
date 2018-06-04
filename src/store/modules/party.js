@@ -18,7 +18,10 @@ const state = {
         selectedBgPageIndex: 1,
         description: '',
         partyVideo: [],
-        localBgImg: ''
+        localBgImg: '',
+        partyFoods: [],
+        foodType: 1,
+        addressFee: 0
     }
 };
 
@@ -47,6 +50,9 @@ const mutations = {
         state.partyMeta.address = `${stateName}${cityName}${regionName}${data.addr}`;
         if(data.pic_party) {
             state.partyMeta.partyPoster = JSON.parse(data.pic_party);
+        }
+        if(data.price) {
+            state.partyMeta.addressFee = +data.price;
         }
     },
     [SET_PARTY_META](state, data){

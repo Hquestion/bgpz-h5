@@ -137,6 +137,15 @@ export default {
     jsonp: function(url, data){
         return Vue.http.jsonp(url);
     },
+    getResource: function(url, ignoreLoading = true){
+        return new Promise((resolve, reject) => {
+            Vue.http({
+                url: url,
+                method: 'GET',
+                ignore: !!ignoreLoading
+            }).then(resolve, reject);
+        });
+    },
     handleResponse: function(res){
         return new Promise((resolve, reject) => {
             if(res.ok && !res.data) {

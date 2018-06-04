@@ -16,6 +16,8 @@ import EditAddress from '../pages/EditAddress';
 import ShareParty from '../pages/ShareParty';
 import MyPartyList from '../pages/MyPartyList';
 import MyJoinedParty from '../pages/MyJoinedParty';
+import Search from '../pages/Search';
+import Banquet from '../pages/Banquet';
 
 const routerCfg = [
     {
@@ -101,6 +103,14 @@ const routerCfg = [
         path: '/my-joined-party',
         name: 'MyJoinParty',
         component: MyJoinedParty
+    }, {
+        path: '/search',
+        name: 'Search',
+        component: Search
+    }, {
+        path: '/banquet',
+        name: 'Banquet',
+        component: Banquet
     }
 ];
 

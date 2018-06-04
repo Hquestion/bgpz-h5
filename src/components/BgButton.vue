@@ -1,5 +1,5 @@
 <template>
-    <v-touch class="bg-button" :class="[size, {block: block}, type]" @tap="onBtnTap">
+    <v-touch class="bg-button" :class="[size, {block: block}, type, shape]" @tap="onBtnTap">
         <slot></slot>
     </v-touch>
 </template>
@@ -16,6 +16,9 @@
             },
             type: {
                 default: 'success'
+            },
+            shape: {
+                default: 'rect'
             }
         },
         methods: {
@@ -36,6 +39,9 @@
         text-align: center;
         font-size: 0.5rem;
         border-radius: 5/37.5rem;
+        &.circle {
+            border-radius: 55/37.5rem;
+        }
         &.success {
             background: @red;
             color: @white;

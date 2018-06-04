@@ -53,7 +53,10 @@ export default {
                 data.successCb.call(this);
             }
         },
-        shareCancelCb(){
+        shareCancelCb(data){
+            if(data.failCb) {
+                data.failCb.call(this);
+            }
             Toast({
                 message: '您取消了分享',
                 position: 'bottom'

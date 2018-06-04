@@ -239,5 +239,48 @@ export default {
             party_id: partyId,
             cmt_content: content
         });
+    },
+    updateUserInfo(userInfo){
+        return httpService.postForm('custom/user/update', {
+            keyValueJson: {
+                avatar: userInfo.avatar,
+                nickname: userInfo.nickname,
+                identity: userInfo.identity
+            }
+        });
+    },
+    getResource(url){
+        return httpService.getResource(url);
+    },
+    getThirdpartAddress(){
+        return httpService.postForm('custom/party/thirdSpaceList', {
+            page: 1,
+            rows: 100
+        });
+    },
+    deleteComment(id){
+        return httpService.postForm('custom/party/delPartyComment', {
+            id: id
+        });
+    },
+    getMyPassedParty(){
+        return httpService.postForm('custom/party/selPartyMaster');
+    },
+    getPartyLackMoney(id){
+        return httpService.postForm('custom/party/selPartyLackMoney', {
+            id: id
+        });
+    },
+    getFoodSeries(){
+        return new Promise((resolve) => {
+            const series = '鲁菜、川菜、粤菜、苏菜、闽菜、浙菜、湘菜、徽菜';
+            resolve(series.split('、').map(item=>{return {name: item};}));
+        });
+    },
+    getFoodSpecial(){
+        return new Promise((resolve) => {
+            const series = '鲁菜、川菜、粤菜、淮扬菜、土菜';
+            resolve(series.split('、').map(item=>{return {name: item};}));
+        });
     }
 };

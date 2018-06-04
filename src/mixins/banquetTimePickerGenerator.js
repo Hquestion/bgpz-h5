@@ -4,7 +4,7 @@ import {range, getMonthDays} from '../util';
 export default {
     methods: {
         generateTimeSlots(defaultVal){
-            let startDate = dayjs().add(+this.config.minPartyTimeToStartTime, 'second');
+            let startDate = dayjs().add(+this.config.minOrderTimeToStartTime, 'second');
             let lastEndTime = dayjs();
             let timeList = this.config.timeList;
             let time = timeList[timeList.length -1].value.split(':');
@@ -12,7 +12,7 @@ export default {
             if(lastEndTime < startDate) {
                 startDate = startDate.add(1, 'day');
             }
-            let endDate = dayjs().add(+this.config.maxPartyTimeToStartTime, 'second');
+            let endDate = dayjs().add(+this.config.maxOrderTimeToStartTime, 'second');
             let yearList = range(startDate.$y, endDate.$y);
             let monthList = range(startDate.$M + 1, endDate.$M + 1);
             let dayList = range(1, Math.max(getMonthDays(startDate.$y, startDate.$M + 1, 0), getMonthDays(endDate.$y, endDate.$M + 1, 0)));
@@ -39,7 +39,7 @@ export default {
         },
         adjustDate(picker, value){
             // 时间选择器改变时，需要调整日期使得只能在开始-结束时间范围内
-            let startDate = dayjs().add(+this.config.minPartyTimeToStartTime, 'second');
+            let startDate = dayjs().add(+this.config.minOrderTimeToStartTime, 'second');
             let startDay = startDate.set('hour', 0).set('minute', 0).set('second', 0);
             let timeList = this.config.timeList;
             if(timeList) {
@@ -49,7 +49,7 @@ export default {
                     startDate = startDate.add(1, 'day');
                 }
             }
-            let endDate = dayjs().add(+this.config.maxPartyTimeToStartTime, 'second');
+            let endDate = dayjs().add(+this.config.maxOrderTimeToStartTime, 'second');
             if(parseInt(value[1]) === (startDate.$M + 1)) {
                 // 如果时起始月份，日期的值必须大于最小日期
                 if(parseInt(value[2]) < startDate.$D) {

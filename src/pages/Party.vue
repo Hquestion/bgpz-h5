@@ -1,7 +1,9 @@
 <template>
     <div class="party">
         <bg-header fixed title="聚会" type="default">
-            <div slot="left">南京</div>
+            <div slot="left">
+                <div class="search-icon" @click="toSearch"><img src="../assets/image/search.png"></div>
+            </div>
             <div slot="action">
                 <v-touch class="add-party" @tap="startParty()">
                     <span>发起聚会</span>
@@ -22,7 +24,7 @@
                 <div>发起聚会</div>
             </v-touch>
         </div>
-        <div class="party-search">
+        <div class="party-search" style="display: none;">
             <bg-search @search="doSearch" v-model="content"></bg-search>
         </div>
         <div class="party-status-tab">
@@ -30,7 +32,7 @@
             <div class="party-tab-item" :class="{active: currentStatus === 3}" @click="setStatus(3)">已结束</div>
         </div>
         <div class="party-list">
-            <mt-loadmore :top-method="refresh" ref="loadmore">
+            <mt-loadmore class="loadmore-area" :top-method="refresh" ref="loadmore">
                 <ul v-show="partyList.length > 0">
                     <v-touch tag="li" v-for="(party, index) in partyList" :key="party.id" @tap="navigateToDetail(party)">
                         <party-card :data="party"></party-card>
@@ -116,10 +118,29 @@
             },
             doSearch(data){
                 this.refresh();
+            },
+            toSearch(){
+                this.$router.push({
+                    name: 'Search',
+                    query: {
+                        type: 'party'
+                    }
+                });
             }
         },
         mounted(){
-            this.init();
+            if(window.localStorage.getItem('noSharedParty')) {
+                let noSharePartyDetail = JSON.parse(window.localStorage.getItem('noSharedParty'));
+                this.$router.replace({
+                    name: 'PaySuccess',
+                    params: {
+                        type: `party@${noSharePartyDetail.id}`,
+                        id: noSharePartyDetail.orderId
+                    }
+                });
+            }else {
+                this.init();
+            }
         }
     }
 </script>
@@ -184,8 +205,11 @@
             }
         }
         .party-list {
-            height: calc(100vh - 50px - 2.6rem - 1.33333rem);
+            height: calc(100vh - 50px - 2.66666rem);
             overflow: auto;
+            .loadmore-area {
+                min-height: 100%;
+            }
             ul {
                 padding: 15/37.5rem;
                 li + li {

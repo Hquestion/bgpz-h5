@@ -185,6 +185,9 @@
                             params: {
                                 type: this.$route.params.type,
                                 id: this.$route.params.id
+                            },
+                            query: {
+                                isNiming: this.$route.query.isNiming
                             }
                         });
                     }else {
@@ -221,6 +224,9 @@
                             params: {
                                 type: this.$route.params.type,
                                 id: this.$route.params.id
+                            },
+                            query: {
+                                isNiming: this.$route.query.isNiming
                             }
                         });
                     } else {
@@ -283,6 +289,7 @@
     @import "../assets/less/variable";
     .pay {
         padding-top: 50px;
+        padding-bottom: 50px;
         img {
             max-width: 100%;
             min-height: 100%;
@@ -323,6 +330,8 @@
                 font-size: 0;
                 img {
                     vertical-align: middle;
+                    width: 17/37.5rem;
+                    height: 17/37.5rem;
                 }
                 span {
                     display: inline-block;

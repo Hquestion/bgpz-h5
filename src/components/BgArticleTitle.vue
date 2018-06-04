@@ -33,10 +33,12 @@
             &:before {
                 left: -70/37.5rem;
                 background: ~"url(../assets/image/tit-lf.png)";
+                background-repeat: no-repeat;
             }
             &:after {
                 right: -70/37.5rem;
                 background: ~"url(../assets/image/tit-rt.png)";
+                background-repeat: no-repeat;
             }
         }
     }

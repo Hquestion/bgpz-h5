@@ -58,7 +58,7 @@
                 joinNumber: 1,
                 payMoney: '',
                 selectMoney: '',
-                isNiming: true,
+                isNiming: false,
                 remark: ''
             };
         },
@@ -129,6 +129,9 @@
                             type: `party@${this.$route.params.id}`,
                             id: res.data.applyId,
                             money: res.data.money
+                        },
+                        query: {
+                            isNiming: this.isNiming ? 1: 0
                         }
                     });
                 }, res => {

@@ -1,7 +1,7 @@
 <template>
     <div class="party-member-card-new">
         <div class="avatar-box">
-            <bg-avatar class="avatar" :src="data.avatar">
+            <bg-avatar class="avatar" :src="data.avatar" width="1.07rem">
                 <div class="join-count">&times;{{data.number}}</div>
             </bg-avatar>
         </div>
@@ -45,12 +45,12 @@
             }
         }
         .phone {
-            margin-top: 10/37.5rem;
+            margin-top: 5/37.5rem;
             color: @text-grey;
             font-size: 12/37.5rem;
         }
         .money {
-            margin-top: 10/37.5rem;
+            margin-top: 5/37.5rem;
             color: @golden;
             font-size: 14/37.5rem;
         }

@@ -4,5 +4,6 @@
         "vue",
         "es2015",
         "stage-3"
-    ]
+    ],
+    "plugins": ["transform-vue-jsx"]
 }

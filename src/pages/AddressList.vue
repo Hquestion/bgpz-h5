@@ -50,8 +50,12 @@
                     api.getUserAddress(1, 20).then(res => {
                         this.addressList = res.data.list;
                     });
-                } else {
+                } else if(this.addressType === 'platform'){
                     api.getPlatformAddress(1, 20).then(res => {
+                        this.addressList = res.data.list;
+                    });
+                }else if(this.addressType === 'thirdpart') {
+                    api.getThirdpartAddress().then(res => {
                         this.addressList = res.data.list;
                     });
                 }
@@ -93,7 +97,7 @@
                 this[SET_USER_ADDRESS](data);
                 this.$router.push({
                     name: 'CreateParty'
-                })
+                });
             }
         },
         mounted(){

@@ -29,7 +29,7 @@
         <div class="row">
             <div class="label">聚会人数</div>
             <div class="label-content">
-                {{data.partyNumber}}人
+                <span class="red">{{data.hasNumber}}</span>/{{data.partyNumber}}人
                 <span v-show="isJoin">(已报名：<span v-text="data.hasNumber"></span>人)</span>
             </div>
         </div>

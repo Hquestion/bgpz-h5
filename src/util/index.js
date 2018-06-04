@@ -1,6 +1,10 @@
 /**
  * 通用的一些函数/接口等，也可以根据业务做一些服务
  */
+import dayjs from 'dayjs';
+
+const day_ZH_map = [ '周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+
 /**
  * 对请求参数进行序列化处理，适配http://api.bagepanzi.com接口
  * @param data
@@ -46,4 +50,12 @@ export function range(start, end, step = 1){
 export function getMonthDays(year,month){
     let now = new Date(year,month, 0);
     return now.getDate();
+}
+
+export function formatTime(timestamp){
+    let date = dayjs(timestamp);
+    let index = date.format('d');
+    let day = day_ZH_map[index];
+    let dateStr = date.format('YYYY-MM-DD HH:mm');
+    return dateStr.slice(0, 11) + ' ' + day + dateStr.slice(11);
 }

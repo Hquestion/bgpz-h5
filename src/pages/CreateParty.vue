@@ -5,28 +5,23 @@
         <div class="base-info">
             <bg-cell arrow="true">
                 <div slot="left">主题</div>
-                <bg-input slot="middle" type="text" placeholder="最多20个字" reverse="true" v-model="model.theme"></bg-input>
+                <bg-input slot="middle" type="text" placeholder="最多30个字" reverse="true" v-model="model.theme" maxlength="30"></bg-input>
             </bg-cell>
             <bg-cell arrow="true" @click.native.prevent.stop="selectTime">
                 <div slot="left">时间</div>
                 <bg-input slot="middle" type="text" placeholder="请选择" reverse="true" v-model="model.time" read-only="true"></bg-input>
             </bg-cell>
             <bg-cell>
+                <div slot="left">报名截止时间</div>
+                <bg-input slot="middle" type="text" :placeholder="`聚会开始前${partyEndJoinHour}小时`" reverse="true" v-model="endJoinTime" read-only="true"></bg-input>
+            </bg-cell>
+            <bg-cell arrow="true" @click.native.prevent.stop="chooseAddressType">
                 <div slot="left">地址</div>
-                <div class="address-selector" slot="middle">
-                    <bg-radio-group v-model="model.addressType" :reverse="true" @change="onAddressTypeChange">
-                        <bg-radio label="我有场地" :value="1"></bg-radio>
-                        <bg-radio label="使用平台场地" :value="2"></bg-radio>
-                    </bg-radio-group>
-                </div>
+                <bg-input slot="middle" type="text" placeholder="请选择" reverse="true" v-model="showAddressType" read-only="true"></bg-input>
             </bg-cell>
             <bg-cell arrow="true" @click.native.prevent.stop="chooseAddress">
                 <div slot="left">详细地址</div>
                 <div slot="middle" v-text="model.address"></div>
-            </bg-cell>
-            <bg-cell>
-                <div slot="left">报名截止时间</div>
-                <bg-input slot="middle" type="text" :placeholder="`聚会开始前${partyEndJoinHour}小时`" reverse="true" v-model="endJoinTime" read-only="true"></bg-input>
             </bg-cell>
             <bg-cell arrow="true" @click.native.prevent.stop="selectTableCount">
                 <div slot="left">人数</div>
@@ -40,20 +35,27 @@
                 <div slot="left">报名费</div>
                 <bg-input slot="middle" type="text" placeholder="根据餐费标准计算" reverse="true" v-model="joinFee" read-only="true"></bg-input>
             </bg-cell>
+            <bg-cell arrow="true" @click.native.prevent.stop="chooseFoodType">
+                <div slot="left">菜单</div>
+                <bg-input slot="middle" type="text" placeholder="请选择" reverse="true" v-model="showFoodType" read-only="true"></bg-input>
+            </bg-cell>
         </div>
         <bg-article-title title="聚主信息"></bg-article-title>
         <div class="owner-info">
-            <bg-cell :arrow="false">
+            <bg-cell :arrow="true">
                 <div slot="left">头像</div>
-                <bg-avatar slot="middle" :src="userInfo.avatar"></bg-avatar>
+                <div slot="middle" class="avatar-selector">
+                    <bg-avatar :src="userInfo.avatar"></bg-avatar>
+                    <input type="file" accept="image/*" name="file" @change="onChangeAvatar">
+                </div>
             </bg-cell>
-            <bg-cell :arrow="false">
+            <bg-cell :arrow="true">
                 <div slot="left">姓名</div>
-                <div slot="middle">{{userInfo.nickname}}</div>
+                <bg-input slot="middle" type="text" placeholder="请输入姓名" reverse="true" v-model="userInfo.nickname"></bg-input>
             </bg-cell>
-            <bg-cell :arrow="false">
+            <bg-cell :arrow="true">
                 <div slot="left">职业</div>
-                <div slot="middle">{{userInfo.role}}</div>
+                <bg-input slot="middle" type="text" placeholder="请输入职业" reverse="true" v-model="userInfo.identity"></bg-input>
             </bg-cell>
             <bg-cell :arrow="false">
                 <div slot="left">电话</div>
@@ -84,6 +86,11 @@
                 </v-touch>
             </div>
         </div>
+        <bg-article-title title="宣传视频"></bg-article-title>
+        <div class="video-upload-area">
+            <div class="tip">(请上传10M以内视频，只支持抖音和快手视频)</div>
+            <bg-video-picker v-model="model.partyVideo"></bg-video-picker>
+        </div>
         <bg-article-title title="主题说明"></bg-article-title>
         <div class="party-desc">
             <bg-cell column="true">
@@ -94,11 +101,11 @@
                 <div slot="left">聚会宣传图片<span class="golden">（请上传4张以上）</span></div>
                 <bg-image-picker slot="middle" v-model="model.partyPoster"></bg-image-picker>
             </bg-cell>
-            <bg-cell column="true" :reverse="false">
-                <div slot="left">聚会宣传视频<span class="golden">（请上传5M大小以内的视频）</span></div>
-                <bg-video-picker slot="middle" v-model="model.partyVideo"></bg-video-picker>
-            </bg-cell>
         </div>
+        <bg-cell column="true" :reverse="false" v-show="model.foodType === 2">
+            <div slot="left">聚会菜单<span class="golden">（请上传4张以上）</span></div>
+            <bg-image-picker slot="middle" v-model="model.partyFoods"></bg-image-picker>
+        </bg-cell>
         <div class="decalare">
             注：聚会成员给聚主最低打赏金额为{{joinFee}}元，此次聚会{{model.partyNumber}}人，可收益{{profit}}元。
         </div>
@@ -106,6 +113,8 @@
         <popup-picker v-model="selectTimeVisible" :picker-slots="timeSlots" title="请选择聚会时间" @change="adjustDate" @data-change="onConfirmTime"></popup-picker>
         <popup-picker v-model="selectTableCountVisible" :picker-slots="tableCountSlots" title="请选择聚会人数" @change="adjustTableCount" @data-change="onConfirmTableCount"></popup-picker>
         <popup-picker v-model="selectDinnerFeeVisible" :picker-slots="dinnerFeeSlots" title="请选择餐费标准" @data-change="onConfirmDinnerFee"></popup-picker>
+        <popup-picker v-model="selectAddressTypeVisible" :picker-slots="addressTypeSlots" title="请选择地址" @data-change="onConfirmAddressType"></popup-picker>
+        <popup-picker v-model="selectFoodTypeVisible" :picker-slots="foodTypeSlots" title="请选择地址" @data-change="onConfirmFoodType"></popup-picker>
     </div>
 </template>
 
@@ -141,7 +150,17 @@
     const party_bg_page_size = 6;
     const addressTypeMap = {
         1: 'user',      //用户地址
-        2: 'platform'   //平台地址
+        2: 'platform',   //平台地址
+        3: 'thirdpart'   //第三方地址
+    };
+    const addTypeCNMap = {
+        1: '自有地址（免费）',      //用户地址
+        2: '平台地址（免费）',      //平台地址
+        3: '第三方地址（收费）'   //第三方地址
+    };
+    const foodTypeMap = {
+        1: '系统菜单',
+        2: '自定义菜单'
     };
     export default {
         name: "CreateParty",
@@ -173,7 +192,38 @@
                 dinnerFeeSlots: [],
                 model: {
 
-                }
+                },
+                addressTypeSlots: [{
+                    values: [{
+                        label: addTypeCNMap[1],
+                        val: 1
+                    }, {
+                        label: addTypeCNMap[2],
+                        val: 2
+                    }
+                    , {
+                        label: addTypeCNMap[3],
+                        val: 3
+                    }
+                    ],
+                    defaultIndex: 0,
+                    flex: 1
+                }],
+                selectAddressTypeVisible: false,
+                selectFoodTypeVisible: false,
+                foodTypeSlots: [
+                    {
+                        values: [{
+                            label: foodTypeMap[1],
+                            val: 1
+                        }, {
+                            label: foodTypeMap[2],
+                            val: 2
+                        }],
+                        defaultIndex: 0,
+                        flex: 1
+                    }
+                ],
             };
         },
         computed: {
@@ -186,7 +236,11 @@
                 }
             },
             joinFeeNumber(){
-                return Math.ceil(this.model.feePer * this.model.partyTableNum * (100 + +this.config.partyUpRate) / 100 / this.model.partyNumber);
+                if(this.model.addressType !== 3) {
+                    return Math.ceil(this.model.feePer * this.model.partyTableNum * (100 + +this.config.partyUpRate) / 100 / this.model.partyNumber);
+                }else {
+                    return Math.ceil((this.model.feePer * this.model.partyTableNum + this.model.addressFee) * (100 + +this.config.partyUpRate) / 100 / this.model.partyNumber);
+                }
             },
             joinFee(){
                 if(this.model.feePer) {
@@ -200,7 +254,11 @@
             },
             profit(){
                 if(this.joinFeeNumber) {
-                    return (this.joinFeeNumber - Math.ceil(this.model.feePer * this.model.partyTableNum / this.model.partyNumber)) * this.model.partyNumber;
+                    if(this.model.addressType === 3) {
+                        return (this.joinFeeNumber - Math.ceil((this.model.feePer * this.model.partyTableNum + this.model.addressFee) / this.model.partyNumber)) * this.model.partyNumber;
+                    }else {
+                        return (this.joinFeeNumber - Math.ceil(this.model.feePer * this.model.partyTableNum / this.model.partyNumber)) * this.model.partyNumber;
+                    }
                 }else {
                     return 0;
                 }
@@ -208,6 +266,16 @@
             showFeePer() {
                 return `￥${this.model.feePer}/桌`;
             },
+            showAddressType(){
+                if(this.model.addressType !== 3) {
+                    return addTypeCNMap[this.model.addressType];
+                }else {
+                    return `第三方地址(￥${this.model.addressFee})`;
+                }
+            },
+            showFoodType(){
+                return foodTypeMap[this.model.foodType];
+            }
         },
         methods: {
             ...mapActions([SET_PARTY_META]),
@@ -268,6 +336,9 @@
                     this.model.selectedBgImg = this.partyBgList[index];
                 }
             },
+            chooseAddressType(){
+                this.selectAddressTypeVisible = true;
+            },
             chooseAddress(){
                 this.$router.push({
                     name: 'AddressList',
@@ -277,12 +348,22 @@
                     }
                 });
             },
+            onConfirmAddressType(value){
+                this.model.addressType = value[0].val;
+                this.onAddressTypeChange();
+            },
             onAddressTypeChange(){
                 this.model.address = '';
                 this.model.partyPoster = [];
             },
             selectDinnerFee(){
                 this.selectDinnerFeeVisible = true;
+            },
+            chooseFoodType(){
+                this.selectFoodTypeVisible = true;
+            },
+            onConfirmFoodType(value){
+                this.model.foodType = value[0].val;
             },
             onConfirmDinnerFee(value){
                 this.model.feePer = value[0].value;
@@ -307,6 +388,26 @@
                     Indicator.close();
                 });
             },
+            onChangeAvatar(e){
+                let imgs = Array.from(e.target.files);
+                if(imgs.length === 0) {
+                    return;
+                }
+                Indicator.open({
+                    text: '正在上传头像...',
+                    spinnerType: 'fading-circle'
+                });
+                this.uploadImg(imgs[0]).then(res => {
+                    this.userInfo.avatar = res.img;
+                    Indicator.close();
+                }, ()=>{
+                    Toast({
+                        message: '更新头像失败，请重试',
+                        position: 'bottom'
+                    });
+                    Indicator.close();
+                });
+            },
             nextStep(){
                 let validationList = [
                     {method: 'isNotEmpty', message: '请输入聚会主题', param: [this.model.theme]},
@@ -317,6 +418,12 @@
                     {method: 'isMatchLength', message: '请添加4张以上聚会图片', param: [this.model.partyPoster, 4, 100]}
                 ];
                 if(form.validate(validationList)) {
+                    if(this.model.foodType === 2) {
+                        let ispass = form.validate([{method: 'isMatchLength', message: '请添加4张以上菜单图片', param: [this.model.partyFoods, 4, 100]}]);
+                        if(!ispass){
+                            return;
+                        }
+                    }
                     //发布聚会
                     let releaseParam = {
                         theme: this.model.theme,
@@ -334,8 +441,15 @@
                         descOne: '1',
                         descTwo: '2',
                         descThree: '3',
-                        videoContent: this.model.partyVideo
+                        videoContent: this.model.partyVideo,
+                        placetype: this.model.addressType
                     };
+                    if(this.model.foodType === 2) {
+                        releaseParam.pic_ownfood = this.model.partyFoods;
+                    }
+                    if(this.model.addressType === 3) {
+                        releaseParam.placecost = this.model.addressFee;
+                    }
                     api.releaseParty(releaseParam).then(res => {
                         this.$router.push({
                             name: 'ShareParty',
@@ -359,6 +473,11 @@
             let self = this;
             this.$watch('model', function(val, oldVal){
                 self[SET_PARTY_META](val);
+            }, {deep: true});
+            this.$watch('userInfo', function(val, oldVal){
+                if(oldVal && oldVal.id) {
+                    api.updateUserInfo(val);
+                }
             }, {deep: true});
             this.model = this.$store.getters.getPartyMeta;
             this.init();
@@ -470,6 +589,21 @@
                 }
             }
         }
+        .owner-info {
+            .avatar-selector {
+                display: flex;
+                flex-direction: row-reverse;
+                position: relative;
+                input {
+                    position: absolute;
+                    left: 0;
+                    top: 0;
+                    height: 100%;
+                    width: 100%;
+                    opacity: 0;
+                }
+            }
+        }
         .party-desc {
             background-color: #fff;
             textarea {
@@ -491,6 +625,16 @@
             padding: 20/37.5rem 15/37.5rem;
             font-size: 14/37.5rem;
             color: @golden;
+        }
+        .video-upload-area {
+            background: #fff;
+            text-align: center;
+            font-size: 0.3rem;
+            color: #999;
+            padding: 0 15/37.5rem 20/37.5rem;
+            .tip {
+                padding: 5/37.5rem 0 15/37.5rem;
+            }
         }
     }
 </style>

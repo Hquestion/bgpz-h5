@@ -147,7 +147,7 @@
                         margin-left: 0.2rem;
                         .has-count {
                             font-size: 0.46rem;
-                            color: #1b1b1b;
+                            color: @red;
                         }
                         .party-indicator {
                             padding: 0.05rem 0.2rem;

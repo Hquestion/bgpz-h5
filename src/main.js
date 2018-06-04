@@ -6,6 +6,8 @@ import 'mint-ui/lib/style.min.css';
 const VueTouch = require('vue-touch');
 import VueLazyload from 'vue-lazyload';
 const loadingImg = require('../static/img/loading1.gif');
+import 'vodal/common.css';
+import 'vodal/zoom.css';
 // import MintUI from 'mint-ui';
 /**
  * vue-navigation  导航默认行为类似手机APP的页面导航

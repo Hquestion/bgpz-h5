@@ -1,12 +1,12 @@
 <template>
     <div class="bg-video-picker">
-        <div class="bg-video-picked" v-for="(img, index) in pickedImgs" :key="index">
-            <video :src="img.img"></video>
-            <div class="del-btn" @click="delImg(index)">
+        <div class="bg-video-picked" v-if="pickedImgs.length > 0">
+            <video :src="pickedImgs[0] && pickedImgs[0].img" preload controls autoplay></video>
+            <div class="del-btn" @click="delImg()">
                 <img src="../assets/image/delete-icon.png">
             </div>
         </div>
-        <div class="bg-video-picker-holder">
+        <div class="bg-video-picker-holder" v-if="pickedImgs.length === 0">
             <img src="../assets/image/upload.png">
             <input type="file" accept="video/mp4" @change="onPickImg" @click="beforePickImg">
         </div>
@@ -16,6 +16,8 @@
 <script>
     import {Indicator, Toast} from 'mint-ui';
     import uploadImg from '../mixins/uploadImg';
+    const indicator = Indicator;
+    const toast = Toast
     export default {
         name: "BgVideoPicker",
         mixins: [uploadImg],
@@ -44,18 +46,16 @@
                     e.preventDefault();
                 }
             },
-            delImg(index) {
-                if (index >= 0) {
-                    this.userPicked.splice(index, 1);
-                    this.$nextTick(() => {
-                        this.$emit('img-change', this.userPicked);
-                    });
-                }
+            delImg() {
+                this.userPicked.splice(0, 1);
+                this.$nextTick(() => {
+                    this.$emit('img-change', this.userPicked);
+                });
             },
             onPickImg(e) {
                 let imgs = Array.from(e.target.files);
-                if(e.target.files[0].size > 5 * 1024 * 1024) {
-                    Toast({
+                if(e.target.files[0].size > 10 * 1024 * 1024) {
+                    toast({
                         message: '视频文件过大',
                         position: 'bottom'
                     });
@@ -63,7 +63,7 @@
                 }
                 let loaded = 0;
                 if(imgs.length > 0) {
-                    Indicator.open({
+                    indicator.open({
                         text: '正在上传视频...',
                         spinnerType: 'fading-circle'
                     });
@@ -77,12 +77,12 @@
                                 this.$emit('img-change', this.userPicked);
                             });
                             if (loaded === imgs.slice(0).length) {
-                                Indicator.close();
+                                indicator.close();
                             }
                         }, () => {
                             loaded++;
                             if (loaded === imgs.slice(0).length) {
-                                Indicator.close();
+                                indicator.close();
                             }
                         });
                     })(item);
@@ -119,7 +119,7 @@
                 }
                 video {
                     width: 100%;
-                    height: auto;
+                    min-height: 100/37.5rem;
                 }
                 .del-btn {
                     position: absolute;
@@ -137,6 +137,9 @@
             }
             &.bg-video-picker-holder {
                 position: relative;
+                width: 80/37.5rem;
+                height: 80/37.5rem;
+                margin: 0 auto;
                 input {
                     position: absolute;
                     left: 0;

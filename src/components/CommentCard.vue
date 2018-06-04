@@ -2,8 +2,11 @@
     <div class="comment-card">
         <div class="card-header">
             <bg-avatar :src="data.avatar" width="0.53rem"></bg-avatar>
-            <div class="card-user-name" v-text="data.nickname"></div>
-            <div class="card-comment-date">{{data.cmt_time | formatTimeShort('sec')}}</div>
+            <div class="card-user-name" v-text="showNickName"></div>
+            <div class="card-comment-date">
+                {{data.cmt_time | formatTimeShort('sec')}}
+                <span style="margin-left: 10px" v-show="isCurrentUser" @click="deleteComment">删除</span>
+            </div>
         </div>
         <div class="card-body">
             {{data.cmt_content}}
@@ -19,7 +22,21 @@
         mixins: [filter],
         components: {BgAvatar},
         props: {
-            data: {}
+            data: {},
+            index: {}
+        },
+        computed: {
+            showNickName(){
+                return this.data.nickname.slice(0, 1) + this.data.nickname.slice(1).replace(/./g, '*');
+            },
+            isCurrentUser(){
+                return this.data.uid + '' === '' + window.localStorage.getItem('openid');
+            }
+        },
+        methods: {
+            deleteComment(){
+                this.$emit('delete', this.data.id, this.index);
+            }
         }
     }
 </script>
@@ -44,7 +61,7 @@
             }
         }
         .card-body {
-            font-size: 14/37.5rem;
+            font-size: 0.4rem;
             text-align: left;
             padding: 10/37.5rem 10/37.5rem 0 10/37.5rem;
         }

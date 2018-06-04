@@ -1,7 +1,7 @@
 <template>
     <div class="address-card">
         <div class="name-phone">
-            <div class="name">{{data.name}}</div>
+            <div class="name">{{addressName}}<span class="red" v-if="data.price">{{`(${data.price})`}}</span></div>
             <div class="phone">{{data.phone}}</div>
         </div>
         <div class="address-detail">{{fullAddress}}</div>
@@ -57,6 +57,13 @@
                 }else {
                     return this.data.addr;
                 }
+            },
+            addressName(){
+                if(this.type === 'thirdpart') {
+                    return this.data.placename;
+                }else {
+                    return this.data.name;
+                }
             }
         },
         methods: {
@@ -96,6 +103,9 @@
             justify-content: space-between;
             align-items: center;
             padding: 5/37.5rem 0;
+            .red{
+                color: @red;
+            }
         }
         .address-detail {
             padding: 10/37.5rem 0;
