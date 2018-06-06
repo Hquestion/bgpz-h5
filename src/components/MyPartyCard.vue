@@ -47,7 +47,7 @@
                 <div class="share-text-tip"><img src="../assets/image/notice.png"><span>需转发到朋友圈才能完成发布</span></div>
                 <v-touch class="btn" @tap="toShareParty">去转发</v-touch>
             </div>
-            <div class="tip" v-show="data.status + '' === '1' || data.status + '' === '2'">
+            <div class="tip" v-show="data.status + '' === '1'">
                 <v-touch class="btn" @tap="cancelParty">取消聚会</v-touch>
             </div>
         </div>

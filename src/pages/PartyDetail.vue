@@ -2,13 +2,13 @@
     <div class="party-detail">
         <bg-header title="聚会详情" type="back" :to="backTo">
             <v-touch slot="action" @tap="share">
-                <img src="../assets/image/share.png">
+                <img src="../assets/image/share.png" style="width: 0.7rem;">
             </v-touch>
         </bg-header>
         <div class="theme-pic">
             <img :src="partyAds" v-if="!partyMeta.videoContent || partyMeta.videoContent.length === 0">
             <div class="party-video" v-else>
-                <video controls="controls" loop preload  v-for="(video,index) in partyMeta.videoContent" :key="index" @canplay="onloadVideo">
+                <video id="partyVideo" controls="controls" preload autoplay loop  v-for="(video,index) in partyMeta.videoContent" :key="index"@canplay="onloadVideo">
                     <source :src="video.img" type="video/mp4"/>
                 </video>
             </div>
@@ -39,11 +39,15 @@
         <div class="detail-tab-anchor" :class="{fixed: currentAnchor > 0}">
             <div class="anchor-container">
                 <div class="anchor-item" :class="{active: currentAnchor === 1}" @click="toAnchor(1)">主题</div>
-                <div class="anchor-item" :class="{active: currentAnchor === 2}" @click="toAnchor(2)">环境</div>
-                <div class="anchor-item" :class="{active: currentAnchor === 3}" @click="toAnchor(3)">菜单</div>
+                <div class="anchor-item" :class="{active: currentAnchor === 2}" @click="toAnchor(2)">菜单</div>
+                <div class="anchor-item" :class="{active: currentAnchor === 3}" @click="toAnchor(3)">环境</div>
+
             </div>
         </div>
         <div id="anchor1"></div>
+        <div class="party-part-indicator">
+            <img src="../assets/image/party-theme.jpg">
+        </div>
         <bg-article-title title="聚会主题"></bg-article-title>
         <div class="theme-pic">
             <img :src="partyMeta.picTheme">
@@ -52,10 +56,9 @@
 
         </div>
         <div id="anchor2"></div>
-        <div class="party-img" v-for="(pic, index) in partyMeta.picContent" :key="index">
-            <img class="poster-img" :src="pic && pic.img || pic">
+        <div class="party-part-indicator">
+            <img src="../assets/image/party-package.jpg">
         </div>
-        <div id="anchor3"></div>
         <bg-article-title title="聚会菜单"></bg-article-title>
         <div class="party-foods" v-show="!partyMeta.picOwnfood || partyMeta.picOwnfood.length === 0">
             <swiper :options="swiperOption" class="swiper-block" style="margin-top: 0;">
@@ -73,6 +76,15 @@
             </swiper>
         </div>
         <bg-white-space></bg-white-space>
+        <div id="anchor3"></div>
+        <div class="party-part-indicator">
+            <img src="../assets/image/party-env.jpg">
+        </div>
+        <div class="party-img" v-for="(pic, index) in partyMeta.picContent" :key="index">
+            <img class="poster-img" :src="pic && pic.img || pic">
+        </div>
+
+        <bg-white-space></bg-white-space>
         <div class="party-comment">
             <div class="party-comment-header">
                 <h3>聚会评论</h3>
@@ -89,7 +101,7 @@
             <!--<div>还缺少:<span class="golden">{{partyMeta.partyNumber - partyMeta.hasNumber}}</span>人<span class="cost">报名费:<span class="red">￥{{partyMeta.costPer}}/人起</span></span></div>-->
             <div class="info">
                 <div class="icon-btns">
-                    <a href="tel:4008-718-181"><img src="../assets/image/kefu.png"></a>
+                    <a :href="'tel:' + partyMeta.ownerPhone"><img src="../assets/image/kefu.png"></a>
                     <a @click="share"><img src="../assets/image/share.png"/></a>
                 </div>
                 <div class="party-count" style="flex: 1">
@@ -130,7 +142,7 @@
 </template>
 
 <script>
-    import {Loadmore, Toast} from 'mint-ui';
+    import {Loadmore} from 'mint-ui';
     import BgHeader from "../components/BgHeader";
     import PartyInfo from "../components/PartyInfo";
     import BgArticleTitle from "../components/BgArticleTitle";
@@ -236,6 +248,15 @@
                         href: `${config.partyDetailUrl}${this.$route.params.id}`,
                         shareImg: this.partyMeta.picTheme
                     });
+                    this.$nextTick(()=>{
+                        wx.ready(function() {
+                            document.getElementById('partyVideo').play();
+                        });
+                        document.addEventListener("WeixinJSBridgeReady", function() {
+                            document.getElementById("partyVideo").play();
+                        }, false);
+                    });
+
                     api.getPackageFoodList(this.partyMeta.packageId).then(res => {
                         this.packageFoodList = res.data && res.data.list;
                     });
@@ -295,7 +316,7 @@
                         let userInfo = data.data;
                         api.sendComment(this.$route.params.id, this.commentText).then(res => {
                             this.commentVisible = false;
-                            this.commentList.push({
+                            this.commentList.unshift({
                                 id: res.data.id,
                                 avatar: userInfo.avatar,
                                 nickname: userInfo.nickname,
@@ -305,7 +326,7 @@
                             });
                             this.commentText = '';
                         }, (res) => {
-                            Toast({
+                            window.commonToast({
                                 message: '评论失败,请重试',
                                 position: 'bottom'
                             });
@@ -317,7 +338,7 @@
                 if(this.isUserInParty) {
                     this.commentVisible = true;
                 }else {
-                    Toast({
+                    window.commonToast({
                         message: '报名后才可以发表评论',
                         position: 'bottom'
                     });
@@ -340,18 +361,20 @@
                 e.target.play();
             },
             onDeleteComment(id, index){
-                api.deleteComment(id).then(res => {
-                    this.commentList.splice(index, 1);
-                }, ()=>{
-                    Toast({
-                        message: '删除评论失败',
-                        position: 'bottom'
+                window.msgBox.confirm('确认删除本条评论？', '提示').then(()=>{
+                    api.deleteComment(id).then(res => {
+                        this.commentList.splice(index, 1);
+                    }, ()=>{
+                        window.commonToast({
+                            message: '删除评论失败',
+                            position: 'bottom'
+                        });
                     });
                 });
             },
             toAnchor(id){
                 let pOffset = this.$el.scrollTop;
-                let anchor = this.$el.querySelector('#anchor'+id).getBoundingClientRect().top - 50;
+                let anchor = this.$el.querySelector('#anchor'+id).getBoundingClientRect().top - 95;
                 this.$el.scrollTop = pOffset + anchor;
             }
         },
@@ -359,26 +382,32 @@
             if(window.history.length === 1) {
                 this.backTo = '/party';
             }
-            this.$nextTick(()=>{
-                this.$el.addEventListener('scroll', (e) => {
-                    let anchorPositions = [];
-                    for(let i = 1; i <= 3; i++) {
-                        let el = this.$el.querySelector('#anchor'+ i);
-                        anchorPositions.push(el.getBoundingClientRect().top - 100);
-                    }
-                    if(anchorPositions[0] > 0) {
-                        this.currentAnchor = 0;
+            this.handleScroll = (e)=> {
+                let anchorPositions = [];
+                for(let i = 1; i <= 3; i++) {
+                    let el = this.$el.querySelector('#anchor'+ i);
+                    anchorPositions.push(el.getBoundingClientRect().top - 100);
+                }
+                if(anchorPositions[0] > 0) {
+                    this.currentAnchor = 0;
+                }else {
+                    let currentIndex = anchorPositions.findIndex(item => item > 0);
+                    if(currentIndex >= 0) {
+                        this.currentAnchor = currentIndex;
                     }else {
-                        let currentIndex = anchorPositions.findIndex(item => item > 0);
-                        if(currentIndex >= 0) {
-                            this.currentAnchor = currentIndex;
-                        }else {
-                            this.currentAnchor = 3;
-                        }
+                        this.currentAnchor = 3;
                     }
-                });
+                }
+            };
+            this.handleScroll = this.handleScroll.bind(this);
+            this.$nextTick(()=>{
+                this.$el.addEventListener('scroll', this.handleScroll);
             });
             this.init();
+        },
+        beforeDestroy(){
+            console.log('组件销毁');
+            this.$el.removeEventListener('scroll', this.handleScroll);
         }
     }
 </script>
@@ -402,6 +431,7 @@
                 align-items: center;
                 background: #fff;
                 font-size: 16/37.5rem;
+                transition: transform ease-in .5s;
             }
             .anchor-item {
                 text-align: center;
@@ -586,8 +616,11 @@
                         height: 0.7rem;
                     }
                     a + a  img{
-                        width: 21/37.5rem;
-                        height: 21/37.5rem;
+                        width: 0.7rem;
+                        height: 0.7rem;
+                    }
+                    a img {
+                        margin-left: 0;
                     }
                 }
                 .party-count {
@@ -679,5 +712,14 @@
                 }
             }
         }
+        .party-part-indicator {
+            text-align: center;
+            img {
+                width: 45/37.5rem;
+            }
+        }
+    }
+    .share-visible .fixed .anchor-container {
+        transform: translateY(80/37.5rem);
     }
 </style>

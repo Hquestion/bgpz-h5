@@ -2,6 +2,7 @@
     <div class="party-card" :class="{'to-join': isRunning, 'join-end': isEnd, 'finish': isFinish}">
         <div class="party-img">
             <img :src="data.picTheme" @click.prevent>
+            <img src="../assets/image/video.png" class="video-indicator" v-if="data.videoContent && data.videoContent.length > 0">
         </div>
         <div class="party-footer">
             <div class="avatar">
@@ -71,11 +72,20 @@
         .party-img {
             width: 100%;
             height: 55vw;
+            position: relative;
             img {
                 width: 100%;
                 height: 100%;
                 border-top-left-radius: 6/37.5rem;
                 border-top-right-radius: 6/37.5rem;
+            }
+            .video-indicator {
+                position: absolute;
+                width: 64/37.5rem;
+                height: 64/37.5rem;
+                left: 50%;
+                top: 50%;
+                transform: translate3d(-50%, -50%, 0);
             }
         }
         .party-footer {

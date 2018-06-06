@@ -24,7 +24,7 @@
         </bg-cell>
         <bg-cell>
             <div slot="left">聚主电话</div>
-            <div slot="middle">{{projectData.ownerPhone}}</div>
+            <div slot="middle"><a :href="'tel:' + projectData.ownerPhone">{{projectData.ownerPhone}}</a></div>
         </bg-cell>
         <bg-button style="margin-top: 0.8rem;display: none;" @tap="goHome">返回列表</bg-button>
         <v-touch class="share-area" @tap="doShareParty">

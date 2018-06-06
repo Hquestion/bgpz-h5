@@ -64,24 +64,35 @@
                     text: '正在上传图片...',
                     spinnerType: 'fading-circle'
                 });
-                imgs.slice(0).forEach(item => {
-                    ((data) => {
+                let uploadedImgs = [];
+                imgs.slice(0).forEach((item, index) => {
+                    ((data, i) => {
                         this.uploadImg(data).then(res => {
                             loaded++;
-                            this.userPicked.push(res);
-                            this.$nextTick(()=>{
-                                this.$emit('img-change', this.userPicked);
+                            uploadedImgs.push({
+                                data: res,
+                                index: i
                             });
                             if(loaded === imgs.slice(0).length) {
                                 indicate.close();
+                                let sortImgs = uploadedImgs.sort((a, b) => a.index - b.index).map(item => item.data);
+                                this.userPicked = [...this.userPicked, ...sortImgs];
+                                this.$nextTick(()=>{
+                                    this.$emit('img-change', this.userPicked);
+                                });
                             }
                         }, ()=>{
                             loaded++;
                             if(loaded === imgs.slice(0).length) {
                                 indicate.close();
+                                let sortImgs = uploadedImgs.sort((a, b) => a.index - b.index).map(item => item.data);
+                                this.userPicked = [...this.userPicked, ...sortImgs];
+                                this.$nextTick(()=>{
+                                    this.$emit('img-change', this.userPicked);
+                                });
                             }
                         });
-                    })(item);
+                    })(item, index);
                 });
             }
         },

@@ -39,6 +39,10 @@
                 <div slot="left">菜单</div>
                 <bg-input slot="middle" type="text" placeholder="请选择" reverse="true" v-model="showFoodType" read-only="true"></bg-input>
             </bg-cell>
+            <bg-cell column="true" :reverse="false" v-show="model.foodType === 2">
+                <div slot="left">聚会菜单<span class="golden">（请上传4张以上）</span></div>
+                <bg-image-picker slot="middle" v-model="model.partyFoods"></bg-image-picker>
+            </bg-cell>
         </div>
         <bg-article-title title="聚主信息"></bg-article-title>
         <div class="owner-info">
@@ -102,10 +106,6 @@
                 <bg-image-picker slot="middle" v-model="model.partyPoster"></bg-image-picker>
             </bg-cell>
         </div>
-        <bg-cell column="true" :reverse="false" v-show="model.foodType === 2">
-            <div slot="left">聚会菜单<span class="golden">（请上传4张以上）</span></div>
-            <bg-image-picker slot="middle" v-model="model.partyFoods"></bg-image-picker>
-        </bg-cell>
         <div class="decalare">
             注：聚会成员给聚主最低打赏金额为{{joinFee}}元，此次聚会{{model.partyNumber}}人，可收益{{profit}}元。
         </div>
@@ -349,8 +349,11 @@
                 });
             },
             onConfirmAddressType(value){
-                this.model.addressType = value[0].val;
-                this.onAddressTypeChange();
+                if(value[0].val !== this.model.addressType) {
+                    this.model.addressType = value[0].val;
+                    this.onAddressTypeChange();
+                    this.chooseAddress();
+                }
             },
             onAddressTypeChange(){
                 this.model.address = '';

@@ -10,7 +10,7 @@ let dialog;
 export default function(router) {
     router.beforeEach((to, from, next) => {
         //获取即将开始的未满员聚会，提醒用户是否继续处理
-        if(isHandled) {
+        if(isHandled || !localStorage.getItem('openid')) {
             next();
         }else {
             api.getMyPassedParty().then(res => {
