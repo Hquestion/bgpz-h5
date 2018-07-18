@@ -8,7 +8,8 @@
         <div class="theme-pic">
             <img :src="partyAds" v-if="!partyMeta.videoContent || partyMeta.videoContent.length === 0">
             <div class="party-video" v-else>
-                <video id="partyVideo" controls="controls" preload autoplay loop  v-for="(video,index) in partyMeta.videoContent" :key="index"@canplay="onloadVideo">
+                <video id="partyVideo" controls="controls" preload autoplay loop  v-for="(video,index) in partyMeta.videoContent" :key="index"
+                       @canplay="onloadVideo"  playsinline="playsinline"  style="object-fit: fill" webkit-playsinline="true" x-webkit-airplay="true" playsinline="true">
                     <source :src="video.img" type="video/mp4"/>
                 </video>
             </div>
@@ -80,6 +81,7 @@
         <div class="party-part-indicator">
             <img src="../assets/image/party-env.jpg">
         </div>
+        <bg-article-title title="聚会环境"></bg-article-title>
         <div class="party-img" v-for="(pic, index) in partyMeta.picContent" :key="index">
             <img class="poster-img" :src="pic && pic.img || pic">
         </div>
@@ -138,6 +140,12 @@
                 </div>
             </div>
         </vodal>
+        <vodal :show="shareQrcodeVisible" animation="zoom" @hide="shareQrcodeVisible=false"
+               class-name="share-qrcode" :custom-styles="{width: '90vw',height: '6rem',borderRadius: '10px'}">
+            <div class="title">长按指纹识别二维码，关注八个盘子</div>
+            <p>关注后即可报名参加聚会</p>
+            <img :src="qrcodeUrl">
+        </vodal>
     </div>
 </template>
 
@@ -160,6 +168,7 @@
     import Vodal from "vodal";
     import BgButton from "../components/BgButton";
     import form from '../util/form';
+    import {parseQueryString} from "../util";
 
     const commentPageSize = 20;
     export default {
@@ -206,7 +215,9 @@
                 leftScrollable: false,
                 rightScrollable: false,
                 commentTotal: 0,
-                currentAnchor: 1
+                currentAnchor: 1,
+                shareQrcodeVisible: false,
+                qrcodeUrl: ''
             }
         },
         computed: {
@@ -239,13 +250,17 @@
             init(){
                 api.getPartyDetail(this.$route.params.id).then(res => {
                     this.partyMeta = res.data;
-                    if(this.partyMeta.picOwnfood) {
+                    if(this.partyMeta.picOwnfood && typeof this.partyMeta.picOwnfood === 'string') {
                         this.partyMeta.picOwnfood = JSON.parse(this.partyMeta.picOwnfood);
+                    }
+                    this.wxconfig();
+                    if(this.partyMeta.partyType === 3) {
+                        this.hideMenu(['menuItem:share:timeline', 'menuItem:share:qq', 'menuItem:share:weiboApp', 'menuItem:share:QZone']);
                     }
                     this.initShareCfg({
                         description: this.partyMeta.description,
                         theme: this.partyMeta.theme,
-                        href: `${config.partyDetailUrl}${this.$route.params.id}`,
+                        href: config.partyDetailUrl(this.$route.params.id, localStorage.getItem('openid') || parseQueryString().uid),
                         shareImg: this.partyMeta.picTheme
                     });
                     this.$nextTick(()=>{
@@ -258,7 +273,7 @@
                     });
 
                     api.getPackageFoodList(this.partyMeta.packageId).then(res => {
-                        this.packageFoodList = res.data && res.data.list;
+                        this.packageFoodList = res.data && res.data.list || [];
                     });
                 }, res => {
                     this.partyMeta = {};
@@ -276,13 +291,55 @@
                 });
                 this.loadComment();
             },
-            join(){
-                this.$router.push({
-                    name: 'JoinParty',
-                    params: {
-                        id: this.$route.params.id
+            getSubscribeWxQrcode(queryString, shareUrl){
+                api.getShareQrcode(this.$route.params.id, queryString.uid || localStorage.getItem('openid'), shareUrl).then(res => {
+                    if(res.respcode === 'S000') {
+                        this.qrcodeUrl = res.data;
+                        this.shareQrcodeVisible = true;
+                    }else {
+                        this.$router.push({
+                            name: 'JoinParty',
+                            params: {
+                                id: this.$route.params.id
+                            }
+                        });
                     }
+                }, ()=>{
+                    this.$router.push({
+                        name: 'JoinParty',
+                        params: {
+                            id: this.$route.params.id
+                        }
+                    });
                 });
+            },
+            join(){
+                let queryString = parseQueryString();
+                if(queryString.from) {
+                    //如果从分享页面进来
+                    let shareUrl = config.partyDetailUrl(this.$route.params.id, localStorage.getItem('openid') || queryString.uid);
+                    api.getWxOpenid(localStorage.getItem('openid') || '0').then(res => {
+                        api.isUserSubscribeWx(res.data).then(res => {
+                            this.$router.push({
+                                name: 'JoinParty',
+                                params: {
+                                    id: this.$route.params.id
+                                }
+                            });
+                        }, ()=>{
+                            this.getSubscribeWxQrcode(queryString, shareUrl);
+                        })
+                    }, ()=>{
+                        this.getSubscribeWxQrcode(queryString, shareUrl);
+                    });
+                }else {
+                    this.$router.push({
+                        name: 'JoinParty',
+                        params: {
+                            id: this.$route.params.id
+                        }
+                    });
+                }
             },
             share(){
                 window.EventBus.$emit('share-visible', true);
@@ -357,8 +414,11 @@
                 }
             },
             onloadVideo(e){
-                console.log(e);
-                e.target.play();
+                try{
+                    e.target.play();
+                }catch (e) {
+                    alert(JSON.stringify(e));
+                }
             },
             onDeleteComment(id, index){
                 window.msgBox.confirm('确认删除本条评论？', '提示').then(()=>{
@@ -379,10 +439,31 @@
             }
         },
         mounted(){
+            //分享hack
+            // if(!this.$route.query.refresh) {
+            //     let refreshHref;
+            //     let queryIndex = location.href.lastIndexOf('?');
+            //     let hashIndex = location.href.lastIndexOf('#');
+            //     if(hashIndex > queryIndex) {
+            //         refreshHref = location.href + '?refresh=1';
+            //     }else {
+            //         refreshHref = location.href.slice(0, queryIndex + 1) + 'refresh=1&' + location.href.slice(queryIndex + 1);
+            //     }
+            //     window.location.href = refreshHref;
+            //     location.reload();
+            //     return;
+            // }
             if(window.history.length === 1) {
                 this.backTo = '/party';
             }
+            let lastTime = +new Date();
             this.handleScroll = (e)=> {
+                let now = +new Date();
+                if(now - lastTime > 300) {
+                    lastTime = now;
+                }else {
+                    return;
+                }
                 let anchorPositions = [];
                 for(let i = 1; i <= 3; i++) {
                     let el = this.$el.querySelector('#anchor'+ i);
@@ -716,6 +797,22 @@
             text-align: center;
             img {
                 width: 45/37.5rem;
+                position: relative;
+                top: 0.6rem;
+            }
+        }
+        .share-qrcode {
+            text-align: center;
+            .title {
+                font-size: 16/37.5rem;
+            }
+            p {
+                padding: 5/37.5rem;
+                font-size: 14/37.5rem;
+                color: @red;
+            }
+            img {
+                width: 40vw;
             }
         }
     }

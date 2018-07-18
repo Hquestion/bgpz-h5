@@ -18,6 +18,13 @@ import MyPartyList from '../pages/MyPartyList';
 import MyJoinedParty from '../pages/MyJoinedParty';
 import Search from '../pages/Search';
 import Banquet from '../pages/Banquet';
+import BanquetPackagePick from '../pages/BanquetPackagePick';
+import PackageDetail from '../pages/PackageDetail';
+import PreOrder from '../pages/PreOrder';
+import OrderExtension from '../pages/OrderExtension';
+import BanquetPay from '../pages/BanquetPay';
+import BanquetFoodValidation from '../pages/BanquetFoodValidation';
+import LlPayForm from '../pages/LlPayForm';
 
 const routerCfg = [
     {
@@ -28,21 +35,24 @@ const routerCfg = [
             name: 'Home',
             component: Home,
             meta: {
-                routeName: '首页'
+                routeName: '首页',
+                isMain: true
             }
         }, {
             path: '/party',
             name: 'Party',
             component: Party,
             meta: {
-                routeName: '聚会'
+                routeName: '聚会',
+                isMain: true
             }
         }, {
             path: '/shop',
             name: 'Shop',
             component: Test,
             meta: {
-                routeName: '商城'
+                routeName: '商城',
+                isMain: true
             }
         }]
     }, {
@@ -111,6 +121,34 @@ const routerCfg = [
         path: '/banquet',
         name: 'Banquet',
         component: Banquet
+    }, {
+        path: '/banquet-pick-package',
+        name: 'BanquetPackagePick',
+        component: BanquetPackagePick
+    }, {
+        path: '/package-detail/:id',
+        name: 'PackageDetail',
+        component: PackageDetail
+    }, {
+        path: '/pre-order/:scence',
+        name: 'PreOrder',
+        component: PreOrder
+    }, {
+        path: '/order-extension/:scence',
+        name: 'OrderExtension',
+        component: OrderExtension
+    }, {
+        path: '/banquet-pay',
+        name: 'BanquetPay',
+        component: BanquetPay
+    }, {
+        path: '/banquet-food-validation/:scene',
+        name: 'BanquetFoodValidation',
+        component: BanquetFoodValidation
+    }, {
+        path: '/llpay-form',
+        name: 'LlPayForm',
+        component: LlPayForm
     }
 ];
 

@@ -21,7 +21,8 @@ const state = {
         localBgImg: '',
         partyFoods: [],
         foodType: 1,
-        addressFee: 0
+        addressFee: 0,
+        partyType: 1
     }
 };
 

@@ -29,11 +29,11 @@
         height: auto;
         text-align: center;
         line-height: 1;
-        border-radius: 20px;
-        padding: 0.3rem 0.2rem;
-        font-size: 0.6rem;
-        min-width: 1.2rem;
-        min-height: 1.2rem;
+        border-radius: 100px;
+        padding: 3/37.5rem 3/37.5rem;
+        font-size: 14/37.5rem;
+        min-width: 20/37.5rem;
+        min-height: 20/37.5rem;
         background: @red;
         color: @white;
         transition: transform ease .1s;

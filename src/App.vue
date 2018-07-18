@@ -8,7 +8,7 @@
         </div>
         <transition>
             <!--<navigation>-->
-                <router-view class="view-container"></router-view>
+                <router-view class="view-container" :class="{'is-sub-page': !$route.meta.isMain}"></router-view>
             <!--</navigation>-->
         </transition>
     </div>
@@ -48,8 +48,13 @@
             position: relative;
             top: 0;
             max-height: 100vh;
+            min-height: 100vh;
             overflow: auto;
             transition: top ease-in .5s;
+            &.is-sub-page {
+                overflow-scrolling: touch;
+                -webkit-overflow-scrolling: touch;
+            }
         }
         .share-tip {
             position: absolute;

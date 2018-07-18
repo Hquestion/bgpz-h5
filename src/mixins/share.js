@@ -5,7 +5,7 @@ const wx = window.wx || {};
 
 export default {
     methods: {
-        initShareCfg(data){
+        wxconfig(){
             let href = location.href;
             api.getSDKData(href.split('#')[0]).then(res => {
                 let wxSdkData = res;
@@ -19,11 +19,24 @@ export default {
                         'onMenuShareTimeline',
                         'onMenuShareAppMessage',
                         'onMenuShareQQ',
-                        'onMenuShareQZone'
+                        'onMenuShareQZone',
+                        'hideMenuItems',
+                        'showMenuItems'
                     ] // 必填，需要使用的JS接口列表
                 });
             });
+        },
+        initShareCfg(data){
+            //需手动调用wxconfig接口
             this._initShareContent(data);
+        },
+        hideMenu(menuList){
+            // 需手动调用wxconfig接口
+            //暂时屏蔽
+            return;
+            wx.hideMenuItems({
+                menuList: menuList // 要隐藏的菜单项，只能隐藏“传播类”和“保护类”按钮，所有menu项见附录3
+            });
         },
         _initShareContent(data){
             let self = this;

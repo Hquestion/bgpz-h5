@@ -13,7 +13,14 @@ const state = {
     cookerCount: 1,
     waiterCount: 1,
     somerwaerCount: 0,
-    banquetAddrType: '1'
+    banquetAddrType: '1',
+    tableCount: 1,
+    peopleCount: 10,
+    selectPackage: '',
+    banquetFoods: {},
+    banquetAddressInfo: {},
+    foodValidationResult: [],
+    validationFoods: []
 };
 
 const getters = {
@@ -21,13 +28,13 @@ const getters = {
         return state.banquetType;
     },
     foodSeries: (state) => {
-        return state.foodSeries || placeHolderText;
+        return state.foodSeries && state.foodSeries.split('@')[1] || placeHolderText;
     },
     foodSpecial: (state) =>{
-        return state.foodSpecial || placeHolderText;
+        return state.foodSpecial && state.foodSpecial.split('@')[1] || placeHolderText;
     },
     costPer(state){
-        return state.costPer && `${state.costPer}元/人` || placeHolderText;
+        return state.costPer;
     },
     banquetTime(state){
         return state.banquetTime > 0 ? formatTime(state.banquetTime * 1000) : timePlaceholder;
@@ -43,6 +50,12 @@ const getters = {
     },
     banquetAddrType:(state) => {
         return state.banquetAddrType;
+    },
+    tablePeopleNum(state){
+        return `${state.peopleCount}人、${state.tableCount}桌` || placeHolderText;
+    },
+    banquetFoods(state){
+        return state.banquetFoods;
     }
 };
 
@@ -73,6 +86,27 @@ const actions = {
     },
     setBanquetAddrType({commit}, data){
         commit('setBanquetAddrType', data);
+    },
+    setTablePeopleCount({commit}, data){
+        commit('setTablePeopleCount', data);
+    },
+    selectBanquetPackage({commit}, data){
+        commit('selectBanquetPackage', data);
+    },
+    setBanquetFoods({commit}, data){
+        commit('setBanquetFoods', data);
+    },
+    setBanquetAddress({commit}, data){
+        commit('setBanquetAddress', data);
+    },
+    setFoodValidationResult({commit}, data){
+        commit('setFoodValidationResult', data);
+    },
+    addValidationFood({commit}, data){
+        commit('addValidationFood', data);
+    },
+    deleteValidationFood({commit}, index){
+        commit('deleteValidationFood', index);
     }
 };
 
@@ -103,7 +137,29 @@ const mutations = {
         state.somerwaerCount = data[0].value;
     },
     setBanquetAddrType(state, data){
-        state.banquetAddrType = data;
+        state.banquetAddrType = data[0].value;
+    },
+    setTablePeopleCount(state, data) {
+        state.peopleCount = data[0].value;
+        state.tableCount = data[1].value;
+    },
+    selectBanquetPackage(state, data){
+        state.selectPackage = data;
+    },
+    setBanquetFoods(state, data){
+        state.banquetFoods = data;
+    },
+    setBanquetAddress(state, data){
+        state.banquetAddressInfo = data;
+    },
+    setFoodValidationResult(state, data){
+        state.foodValidationResult = data;
+    },
+    addValidationFood(state, data){
+        state.validationFoods.push(data);
+    },
+    deleteValidationFood(index){
+        state.validationFoods.splice(index, 1);
     }
 };
 

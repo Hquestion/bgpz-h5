@@ -1,4 +1,3 @@
-import {Toast} from 'mint-ui';
 export default {
     validate(list) {
         let isPass = true;
@@ -17,7 +16,7 @@ export default {
         if(isPass) {
             return true;
         }else {
-            Toast({
+            window.commonToast({
                 message: message,
                 position: 'bottom'
             });
@@ -36,6 +35,19 @@ export default {
             } else {
                 return Object.keys(value).length > 0;
             }
+        }
+    },
+    isAfterTime(value){
+        if(!value) {
+            return false;
+        }else {
+            let d, now = new Date();
+            if(typeof value === 'number') {
+                d = new Date(value * 1000);
+            }else if(typeof value === 'string') {
+                d = new Date(value);
+            }
+            return +now - d < 0;
         }
     },
     isMatchLength(value, min, max){

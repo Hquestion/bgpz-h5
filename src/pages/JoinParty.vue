@@ -8,7 +8,7 @@
                 <number-input v-model="joinNumber" :min="1" :max="partyMeta.partyNumber - partyMeta.hasNumber"></number-input>
             </div>
         </div>
-        <div class="field">
+        <div class="field" v-show="partyMeta.partyType !== 3">
             <div class="label">打赏聚主</div>
             <div class="content">
                 <div class="list">
@@ -35,7 +35,28 @@
             </div>
         </div>
         <div class="golden tip">
-            注：如聚会被取消，则费用将退到账户余额。
+            <div class="label">报名须知：</div>
+            <div class="pay-party-tip" v-if="partyMeta.partyType !== 3">
+                1、累计参加（活动聚会）10次，送2000元生日宴1桌；<br>
+                2、打赏付费后分享到朋友圈才算报名成功；<br>
+                3、报名成功后获得的微信消息通知可作为参会凭证；<br>
+                4、打赏付款成功的名额，无法退款和改期，可自行转让名额；<br>
+                5、不接受现场付款和临时加入，特殊情况请联系聚主；<br>
+                6、聚会请着时装和正装；请不要迟到，活动准时开始；<br>
+                7、未达成人数，聚主有权取消聚会，平台安排退款；<br>
+                8、费用不包括酒水，可自带或现场AA制；<br>
+                9、如需要平台帮助，请联系客服热线<a href="tel:4008-718-181">4008-718-181</a><br>
+            </div>
+            <div class="free-party-tip" v-else>
+                1、报名后分享到朋友圈方视为报名成功；<br>
+                2、报名成功后获得的微信消息通知可作为参会凭证；<br>
+                3、报名成功的名额不可转让；<br>
+                4、不接受现场报名和临时加入，特殊情况请联系聚主；<br>
+                5、聚会请着时装和正装；请不要迟到，活动准时开始；<br>
+                6、未达成人数，聚主有权取消聚会；<br>
+                7、报名成员必须是聚主的朋友；<br>
+                8、如需要平台帮助，请联系客服热线<a href="tel:4008-718-181">4008-718-181</a><br>
+            </div>
         </div>
         <footer>
             <div class="count">合计<span class="red">￥{{totalMoney}}</span></div>
@@ -106,6 +127,45 @@
                     Toast({
                         message: `打赏金额不能低于${this.partyMeta.costPer}元`,
                         position: 'bottom'
+                    });
+                    return;
+                }
+                if(this.partyMeta.partyType === 3) {
+                    //如果是免费聚会,直接调用余额支付
+                    api.joinParty({
+                        anonymous: this.isNiming ? 1: 0,
+                        cost: 0,
+                        number: this.joinNumber,
+                        partyId: this.$route.params.id,
+                        remark: this.remark
+                    }).then(res => {
+                        api.pay({
+                            orderId: res.data.applyId,
+                            payType: '3',
+                            paySence: 6,
+                            payPwd: '111111'
+                        }).then(payRes => {
+                            this.$router.replace({
+                                name: 'PaySuccess',
+                                params: {
+                                    type: `party@${this.$route.params.id}`,
+                                    id: res.data.applyId
+                                },
+                                query: {
+                                    isNiming: this.isNiming ? 1: 0
+                                }
+                            });
+                        }, ()=>{
+                            commonToast({
+                                message: '聚会报名失败，请重试',
+                                position: 'bottom'
+                            });
+                        })
+                    }, ()=>{
+                        commonToast({
+                            message: '聚会报名失败，请重试',
+                            position: 'bottom'
+                        });
                     });
                     return;
                 }
@@ -232,8 +292,15 @@
         }
         .tip {
             color: @golden;
-            padding: 15/37.5rem;
-            font-size: 0.4rem;
+            padding: 0 0.4rem 0.3rem 0.4rem;
+            font-size: 0.32rem;
+            line-height: 1.5;
+            .label {
+                padding: 0 5px 5px 0;
+            }
+            a {
+                color: @red;
+            }
         }
         footer {
             position: fixed;

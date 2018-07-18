@@ -29,6 +29,9 @@
         </div>
         <div class="party-status-tab">
             <div class="party-tab-item" :class="{active: currentStatus === 1}" @click="setStatus(1)">进行中</div>
+            <!--<div class="party-tab-item" :class="{active: currentStatus === -1}" @click="setStatus(-1)">社交聚会</div>-->
+            <!--<div class="party-tab-item" :class="{active: currentStatus === -2}" @click="setStatus(-2)">AA聚会</div>-->
+            <!--<div class="party-tab-item" :class="{active: currentStatus === -3}" @click="setStatus(-3)">免费聚会</div>-->
             <div class="party-tab-item" :class="{active: currentStatus === 3}" @click="setStatus(3)">已结束</div>
         </div>
         <div class="party-list">
@@ -129,6 +132,21 @@
             }
         },
         mounted(){
+            api.getUserUnshareParty().then(res => {
+                if(res.data && res.data.length > 0) {
+                    this.$router.replace({
+                        name: 'PaySuccess',
+                        params: {
+                            type: `party@${res.data[0].party_id}`,
+                            id: res.data[0].id
+                        }
+                    });
+                }else {
+                    this.init();
+                }
+            }, ()=>{
+                this.init();
+            });
             if(window.localStorage.getItem('noSharedParty')) {
                 let noSharePartyDetail = JSON.parse(window.localStorage.getItem('noSharedParty'));
                 this.$router.replace({
@@ -139,7 +157,7 @@
                     }
                 });
             }else {
-                this.init();
+
             }
         }
     }

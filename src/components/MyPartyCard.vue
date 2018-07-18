@@ -43,12 +43,18 @@
             </div>
         </v-touch>
         <div class="actions" v-show="data.status + '' !== '3' && data.status + '' !== '-1' && type === '1'" >
-            <div class="info" v-show="data.status + '' === '0'">
+            <div class="info" v-show="data.status + '' === '0' && data.isPay + '' === '1'">
                 <div class="share-text-tip"><img src="../assets/image/notice.png"><span>需转发到朋友圈才能完成发布</span></div>
                 <v-touch class="btn" @tap="toShareParty">去转发</v-touch>
             </div>
-            <div class="tip" v-show="data.status + '' === '1'">
-                <v-touch class="btn" @tap="cancelParty">取消聚会</v-touch>
+            <div class="tip" v-show="data.status + '' === '0' && data.isPay + '' !== '1' && data.partyType === 3">
+                <v-touch class="btn red" @tap="payFreeParty">去支付</v-touch>
+            </div>
+            <div class="tip" v-show="data.status + '' === '1' && data.partyType !== 3">
+                <div class="btn" @click="cancelParty">取消聚会</div>
+            </div>
+            <div class="tip" v-show="data.status + '' === '4' && data.partyType !== 3">
+                <div class="btn" @click="cancelParty">取消聚会</div>
             </div>
         </div>
         <div class="actions" v-show="data.partyInStatus + '' === '0' && type === '2'" >
@@ -65,6 +71,7 @@
     import filter from '../mixins/filter'
 
     import dayjs from 'dayjs';
+    import api from '../api';
 
     const statusTextMap = {
         '-1': {
@@ -86,6 +93,10 @@
         '3': {
             'text': '已结束',
             'color': '#AA9069'
+        },
+        '4': {
+            'text': '待确认',
+            'color': '#e70022'
         }
     };
     const joinedStatusTextMap = {
@@ -175,7 +186,16 @@
                 }
             },
             cancelParty(){
-
+                msgBox.confirm('确定取消本次聚会？', '提示').then(confirm => {
+                    api.cancelParty(this.data.id).then(res => {
+                        this.data.status = -1;
+                    }, (res)=> {
+                        commonToast({
+                            message: res.msg,
+                            position: 'bottom'
+                        });
+                    });
+                });
             },
             toShareParty(){
                 this.$router.push({
@@ -201,6 +221,26 @@
                     params: {
                         id: this.data.id
                     }
+                });
+            },
+            payFreeParty(){
+                api.getFreePartyOrder(this.data.id).then(res => {
+                    this.$router.push({
+                        name: 'Pay',
+                        params: {
+                            type: `party@${res.data.party_id}`,
+                            id: res.data.id,
+                            money: res.data.money
+                        },
+                        query: {
+                            isNiming: 1
+                        }
+                    });
+                }, ()=>{
+                    commonToast({
+                        message: '获取聚会订单失败！',
+                        position: 'bottom'
+                    });
                 });
             }
         },
@@ -288,6 +328,10 @@
                 border: 1px solid @text-grey;
                 color: @text-grey;
                 border-radius: 5/37.5rem;
+                &.red {
+                    border: 1px solid @red;
+                    color: @red;
+                }
             }
         }
         & + .my-party-card {

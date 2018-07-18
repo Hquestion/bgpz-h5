@@ -82,7 +82,8 @@
                 payType: 'ACCOUNT',
                 adsUrl: '',
                 isPaid: false,
-                timeLeft: 3 * 60 * 1000
+                timeLeft: 3 * 60 * 1000,
+                partyData: null
             };
         },
         computed: {
@@ -115,6 +116,7 @@
                 api.getPartyDetail(typeId).then(res => {
                     this.imgUrl = res.data.ownerAvatar;
                     this.projectName = res.data.theme;
+                    this.partyData = res.data;
                 });
             },
             startTimer(){
@@ -160,7 +162,7 @@
             },
             doPay(){
                 if(this.typeName === 'party') {
-                    this.doPayParty()
+                    this.doPayParty();
                 }
             },
             doPayParty(){
@@ -180,16 +182,26 @@
                     //支付成功
                     if(PayTypeMap[this.payType] === 3) {
                         this.isPaid = true;
-                        this.$router.replace({
-                            name: 'PaySuccess',
-                            params: {
-                                type: this.$route.params.type,
-                                id: this.$route.params.id
-                            },
-                            query: {
-                                isNiming: this.$route.query.isNiming
-                            }
-                        });
+                        if(this.partyData && this.partyData.partyType === 3) {
+                            //如果是免费聚会支付，此时是聚主支付，需要跳转分享页面
+                            this.$router.replace({
+                                name: 'ShareParty',
+                                params: {
+                                    id: this.typeId
+                                }
+                            });
+                        }else {
+                            this.$router.replace({
+                                name: 'PaySuccess',
+                                params: {
+                                    type: this.$route.params.type,
+                                    id: this.$route.params.id
+                                },
+                                query: {
+                                    isNiming: this.$route.query.isNiming
+                                }
+                            });
+                        }
                     }else {
                         //todo js调用支付api
                         this.callWxPay(JSON.parse(res.data.text));
@@ -219,16 +231,26 @@
                         });
                         //todo 跳转支付成功页面
                         this.isPaid = true;
-                        this.$router.replace({
-                            name: 'PaySuccess',
-                            params: {
-                                type: this.$route.params.type,
-                                id: this.$route.params.id
-                            },
-                            query: {
-                                isNiming: this.$route.query.isNiming
-                            }
-                        });
+                        if(this.partyData && this.partyData.partyType === 3) {
+                            //如果是免费聚会支付，此时是聚主支付，需要跳转分享页面
+                            this.$router.replace({
+                                name: 'ShareParty',
+                                params: {
+                                    id: this.typeId
+                                }
+                            });
+                        }else {
+                            this.$router.replace({
+                                name: 'PaySuccess',
+                                params: {
+                                    type: this.$route.params.type,
+                                    id: this.$route.params.id
+                                },
+                                query: {
+                                    isNiming: this.$route.query.isNiming
+                                }
+                            });
+                        }
                     } else {
                         this.isPaid = false;
                         Toast({
@@ -365,6 +387,7 @@
                 .pay-tip {
                     color: @text-grey;
                     font-size: 14/37.5rem;
+                    text-align: left;
                     &.golden {
                         color: @golden;
                     }

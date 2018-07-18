@@ -59,6 +59,20 @@
                 if(imgs.length === 0) {
                     return;
                 }
+                //检查图片大小是否超过3MB，是则提示用户修改图片
+                let bigImgs = [];
+                imgs.forEach((item, index) => {
+                    if(item.size > 3*1000*1000) {
+                        bigImgs.push(index + 1);
+                    }
+                });
+                if(bigImgs.length > 0) {
+                    commonToast({
+                        message: `第${bigImgs.join('、')}张图片较大！`,
+                        position: 'bottom'
+                    });
+                    return;
+                }
                 let loaded = 0;
                 indicate.open({
                     text: '正在上传图片...',

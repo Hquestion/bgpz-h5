@@ -1,11 +1,11 @@
 <template>
     <div class="share-party">
-        <bg-header title="分享到朋友圈"></bg-header>
+        <bg-header title="分享"></bg-header>
         <div class="party-container">
             <party-card :data="partyMeta"></party-card>
         </div>
         <v-touch class="share-area" @tap="doShareParty">
-            <div class="golden">须转发到朋友圈后才能完成聚会发布</div>
+            <div class="golden">须分享后才能完成聚会发布</div>
             <div class="pyq-logo">
                 <img src="../assets/image/pengyouquan.png">
             </div>
@@ -41,10 +41,11 @@
             init(){
                 api.getPartyDetail(this.partyId).then(res => {
                     this.partyMeta = res.data;
+                    this.wxconfig();
                     this.initShareCfg({
                         description: this.partyMeta.description,
                         theme: this.partyMeta.theme,
-                        href: `${config.partyDetailUrl}${this.$route.params.id}`,
+                        href:  config.partyDetailUrl(this.$route.params.id, localStorage.getItem('openid')),
                         shareImg: this.partyMeta.picTheme,
                         successCb(){
                             api.openParty(this.partyId).then(res => {
@@ -69,6 +70,20 @@
             }
         },
         mounted(){
+            //分享hack
+            if(!this.$route.query.refresh) {
+                let refreshHref;
+                let queryIndex = location.href.lastIndexOf('?');
+                let hashIndex = location.href.lastIndexOf('#');
+                if(hashIndex > queryIndex) {
+                    refreshHref = location.href + '?refresh=1';
+                }else {
+                    refreshHref = location.href.slice(0, queryIndex + 1) + 'refresh=1&' + location.href.slice(queryIndex + 1);
+                }
+                window.location.href = refreshHref;
+                location.reload();
+                return;
+            }
             this.init();
         }
     }

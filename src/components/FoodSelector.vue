@@ -42,10 +42,10 @@
         display: flex;
         justify-content: flex-start;
         flex-direction: column;
-        padding: 0.5rem 0.8rem;
+        padding: 10/37.5rem 15/37.5rem;
         .food-thumb {
             width: 100%;
-            height: 8rem;
+            height: 3.7rem;
             text-align: center;
             img {
                 border-radius: @radius;
@@ -57,11 +57,11 @@
         .food-brief {
             flex: 1;
             height: 100%;
-            padding: 0.5rem 0;
+            padding: 10/37.5rem 0;
             .food-name {
                 width: 100%;
                 height: 60%;
-                font-size: 1.2rem;
+                font-size: 16/37.5rem;
             }
             .price-count-box {
                 display: flex;

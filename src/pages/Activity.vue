@@ -294,6 +294,11 @@
                 remark.isActive = !remark.isActive;
             },
             onOrder(){
+                myToast({
+                    message: '系统维护',
+                    position: 'bottom'
+                });
+                return;
                 if(!this.coupon) {
                     myToast({
                         message: '请输入兑换码编号',

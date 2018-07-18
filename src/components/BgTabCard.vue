@@ -32,10 +32,11 @@
     .bg-tab-card {
         width: 100%;
         height: auto;
-        padding: 0.5rem;
+        padding: 15/37.5rem 10/37.5rem;
         background: @light;
         color: @dark;
         border-bottom: 1px solid #e2e2e2;
+        font-size: 14/37.5rem;
         &.active {
             background: @white;
         }

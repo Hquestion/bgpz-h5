@@ -1,15 +1,15 @@
 <template>
     <div class="number-input-component">
         <transition name="slide">
-            <v-touch @tap="minus($event)" v-show="count > 0" class="icon icon-minus">
-            </v-touch>
+            <div @click="minus($event)" class="icon icon-minus">
+            </div>
         </transition>
         <transition name="slide">
-            <div class="count" v-text="count" v-show="count > 0"></div>
+            <div class="count" v-text="count"></div>
         </transition>
-        <v-touch @tap="plus($event)">
+        <div @click="plus($event)">
             <div class="icon icon-plus"></div>
-        </v-touch>
+        </div>
     </div>
 </template>
 
@@ -22,13 +22,16 @@
         },
         props: {
             count: Number,
-            max: Number,
+            max: {
+                type: Number,
+                default: 99999
+            },
             min: Number
         },
         data() {
             return {
                 numberVal: 0
-            }
+            };
         },
         methods: {
             minus($event) {
@@ -61,7 +64,7 @@
     .number-input-component {
         display: flex;
         align-items: center;
-        justify-items: flex-start;
+        justify-items: flex-end;
         width: 100%;
         text-align: center;
         font-size: 0.45rem;

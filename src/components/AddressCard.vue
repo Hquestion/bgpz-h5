@@ -1,7 +1,7 @@
 <template>
     <div class="address-card">
         <div class="name-phone">
-            <div class="name">{{addressName}}<span class="red" v-if="data.price">{{`(${data.price})`}}</span></div>
+            <div class="name">{{addressName}}<span class="red" v-if="data.price">{{`(￥${data.price})`}}</span></div>
             <div class="phone">{{data.phone}}</div>
         </div>
         <div class="address-detail">{{fullAddress}}</div>

@@ -55,6 +55,7 @@
             margin-left: 0.5rem;
             display: flex;
             flex-direction: row-reverse;
+            font-size: 14/37.5rem;
         }
         .action {
             width: 20/37.5rem;

@@ -54,17 +54,17 @@
         border-bottom: 1px solid #dedede;
         color: #1b1b1b;
         height: 50px;
-        font-size: 0.5rem;
+        font-size: 18px;
         top: 0;
         transition: top ease-in .5s;
         z-index: 10 !important;
         .default {
-            font-size: 0.48rem;
+            font-size: 16px;
         }
     }
     .bgpz-header .mint-header-title {
         height: 100%;
         line-height: 50px;
-        font-size: 0.6rem;
+        font-size: 20px;
     }
 </style>

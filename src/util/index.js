@@ -59,3 +59,18 @@ export function formatTime(timestamp){
     let dateStr = date.format('YYYY-MM-DD HH:mm');
     return dateStr.slice(0, 11) + ' ' + day + dateStr.slice(11);
 }
+
+export function parseQueryString(){
+    let search = window.location.search.slice(1);
+    if(search.length > 0) {
+        let result = {};
+        let searchArray = search.split('&');
+        searchArray.map(item => {
+            let keyValArray = item.split('=');
+            result[keyValArray[0]] = keyValArray[1];
+        });
+        return result;
+    }else {
+        return {};
+    }
+}

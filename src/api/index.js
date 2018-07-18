@@ -271,16 +271,152 @@ export default {
             id: id
         });
     },
-    getFoodSeries(){
-        return new Promise((resolve) => {
-            const series = '鲁菜、川菜、粤菜、苏菜、闽菜、浙菜、湘菜、徽菜';
-            resolve(series.split('、').map(item=>{return {name: item};}));
+    userSharePartyPay(orderId){
+        return httpService.postForm('custom/party/shareParty', {
+            id: orderId
         });
     },
+    getUserUnshareParty(){
+        return httpService.postForm('custom/party/selShareparty');
+    },
+    getFoodSeries(){
+        return httpService.postForm('common/selFoodSeries');
+    },
     getFoodSpecial(){
-        return new Promise((resolve) => {
-            const series = '鲁菜、川菜、粤菜、淮扬菜、土菜';
-            resolve(series.split('、').map(item=>{return {name: item};}));
+        return httpService.postForm('common/selFoodSpecial');
+    },
+    getShareQrcode(id, uid, url){
+        return httpService.postForm('Fund/shareQrcode', {
+            id: id,
+            uid: uid,
+            type: 2,
+            url: url
+        });
+    },
+    getFreePartyOrder(partyId){
+        return httpService.postForm('custom/party/selPayparty', {
+            id: partyId
+        });
+    },
+    cancelParty(partyId){
+        return httpService.postForm('custom/party/cleParty', {
+            id: partyId
+        });
+    },
+    getWxOpenid(uid){
+        return httpService.postForm('common/grantOpenid', {
+            uid: uid
+        });
+    },
+    isUserSubscribeWx(openid){
+        return httpService.postForm('common/wxSubscribe', {
+            openid: openid
+        });
+    },
+    filterBanquetPackageList(price, foodSeries, foodSpecial){
+        return httpService.postForm('common/packageList', {
+            page: 1,
+            rows: 20,
+            sence: 3,
+            price: price,
+            series: foodSeries,
+            special: foodSpecial
+        });
+    },
+    getPackageList(){
+        return httpService.postForm('/common/packageList', {
+            page: 1,
+            rows: 100,
+            sence: 4,
+            keywords: ""
+        });
+    },
+    getPackageDetail(id) {
+        return httpService.postForm('/common/packageDetail', {
+            id: id
+        });
+    },
+    getPackageFoods(id) {
+        return httpService.postForm('/common/packageFoodList', {
+            packageId: id
+        });
+    },
+    getPackageActivity(){
+        return httpService.get(config.apartHttpServerUrl + 'api/Food/GetListDiscountFoodView', {}, false, true);
+    },
+    verifyFoodMatchNumberOfPeople(param){
+        return httpService.post(config.apartHttpServerUrl + 'api/Order/VerificationFoodCategoryPeople', param, false, true);
+    },
+    getH5(param){
+        return new Promise((resolve, reject) => {
+            httpService.postForm('common/single', {
+                tagList: param
+            }).then(res => {
+                resolve(res);
+            }, reject);
+        });
+    },
+    getOrderExtension(){
+        let param = {
+            orderType: 1
+        };
+        return httpService.get(config.apartHttpServerUrl + 'api/OrderExtension/GetOrderExtensionSelectByOrderType', param, false, true);
+    },
+    saveOrderExtension(orderId, modelList){
+        return httpService.post(config.apartHttpServerUrl + 'api/OrderExtension/SaveOrderExtensionSelect', {
+            order_id: orderId,
+            modelList: modelList
+        }, false, true);
+    },
+    submitBanquetOrder(param){
+        return new Promise((resolve, reject) => {
+            httpService.postForm('/custom/order/postOrder', param).then(res => {
+                resolve(res);
+            }, (res)=>{
+                reject(res);
+            });
+        });
+    },
+    getToChangeFoodList(foodId){
+        return new Promise((resolve, reject) => {
+            httpService.postForm('/common/changeFoodList', {
+                rows: 100,
+                page: 1,
+                foodId: foodId
+            }).then(res=> {
+                resolve(res);
+            }, reject);
+        });
+    },
+    getFoodsByCate(cateId, companyId){
+        return httpService.postForm('/common/cateFoodList', {
+            cateId: cateId,
+            companyId: companyId,
+            page: 1,
+            rows: 100,
+        });
+    },
+    userIsVip(){
+        return httpService.postForm('/custom/user/checkVipValid');
+    },
+    vipMonthAvaliableTimes(){
+        return httpService.postForm('/custom/user/availableNum');
+    },
+    isUserFirstTimeRecharge(){
+        return httpService.postForm('/custom/user/userFirstFund');
+    },
+    updateOrderInfo(param){
+        return httpService.postForm('/custom/order/llpayOrderinfo', param);
+    },
+    getOrderDetail(orderId){
+        return httpService.postForm('/custom/order/detail', {
+            orderId: orderId
+        });
+    },
+    updateOrderRemark(orderId, remark){
+        return httpService.postForm('/custom/order/updateRemark', {
+            orderId,
+            remark
         });
     }
 };

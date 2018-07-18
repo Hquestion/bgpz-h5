@@ -43,7 +43,10 @@
             };
         },
         methods: {
-            ...mapActions([SET_USER_ADDRESS]),
+            ...mapActions([
+                SET_USER_ADDRESS,
+                'setBanquetAddress'
+            ]),
             init(){
                 if(this.addressType === 'user') {
                     //如果地址类型是用户地址，则获取用户地址
@@ -94,10 +97,20 @@
                 });
             },
             onUseAddress(data){
-                this[SET_USER_ADDRESS](data);
-                this.$router.push({
-                    name: 'CreateParty'
-                });
+                if(this.$route.query.scene === 'banquet' || this.$route.query.scene === 'company') {
+                    this.setBanquetAddress(data);
+                    this.$router.push({
+                        name: 'PreOrder',
+                        params: {
+                            scence: this.$route.query.scene
+                        }
+                    });
+                }else {
+                    this[SET_USER_ADDRESS](data);
+                    this.$router.push({
+                        name: 'CreateParty'
+                    });
+                }
             }
         },
         mounted(){

@@ -7,6 +7,10 @@
                 <div slot="left">主题</div>
                 <bg-input slot="middle" type="text" placeholder="最多30个字" reverse="true" v-model="model.theme" maxlength="30"></bg-input>
             </bg-cell>
+            <bg-cell arrow="true" @click.native.prevent.stop="selectPartyTypeVisible = true">
+                <div slot="left">聚会类型</div>
+                <bg-input slot="middle" type="text" placeholder="聚会类型" reverse="true" v-model="partyTypeText" read-only="true"></bg-input>
+            </bg-cell>
             <bg-cell arrow="true" @click.native.prevent.stop="selectTime">
                 <div slot="left">时间</div>
                 <bg-input slot="middle" type="text" placeholder="请选择" reverse="true" v-model="model.time" read-only="true"></bg-input>
@@ -73,6 +77,7 @@
                     <v-touch class="local-img-box" @tap="selectBgImg(-1)">
                         <img :src="model.localBgImg">
                         <div class="check-radio" :class="{checked: model.selectedBgImg === model.localBgImg}"></div>
+                        <div class="delete-local-img-btn" @click="deleteLocalImg"></div>
                     </v-touch>
                 </div>
                 <v-touch class="bg-images-item" v-for="(item, index) in partyBgList" :key="index" @tap="selectBgImg(index)">
@@ -114,7 +119,8 @@
         <popup-picker v-model="selectTableCountVisible" :picker-slots="tableCountSlots" title="请选择聚会人数" @change="adjustTableCount" @data-change="onConfirmTableCount"></popup-picker>
         <popup-picker v-model="selectDinnerFeeVisible" :picker-slots="dinnerFeeSlots" title="请选择餐费标准" @data-change="onConfirmDinnerFee"></popup-picker>
         <popup-picker v-model="selectAddressTypeVisible" :picker-slots="addressTypeSlots" title="请选择地址" @data-change="onConfirmAddressType"></popup-picker>
-        <popup-picker v-model="selectFoodTypeVisible" :picker-slots="foodTypeSlots" title="请选择地址" @data-change="onConfirmFoodType"></popup-picker>
+        <popup-picker v-model="selectFoodTypeVisible" :picker-slots="foodTypeSlots" title="请选择菜单" @data-change="onConfirmFoodType"></popup-picker>
+        <popup-picker v-model="selectPartyTypeVisible" :picker-slots="partyTypeSlots" title="请选择聚会类型" @data-change="onConfirmPartyType"></popup-picker>
     </div>
 </template>
 
@@ -162,6 +168,11 @@
         1: '系统菜单',
         2: '自定义菜单'
     };
+    const partyTypeMap = {
+        1: '社交聚会',
+        2: 'AA制聚会',
+        3: '免费聚会'
+    };
     export default {
         name: "CreateParty",
         mixins: [timePickerGenerator, tableCountGenerator, filter, dinnerFeeGenerator, uploadImg],
@@ -193,37 +204,21 @@
                 model: {
 
                 },
-                addressTypeSlots: [{
-                    values: [{
-                        label: addTypeCNMap[1],
-                        val: 1
-                    }, {
-                        label: addTypeCNMap[2],
-                        val: 2
-                    }
-                    , {
-                        label: addTypeCNMap[3],
-                        val: 3
-                    }
-                    ],
-                    defaultIndex: 0,
-                    flex: 1
-                }],
                 selectAddressTypeVisible: false,
                 selectFoodTypeVisible: false,
-                foodTypeSlots: [
-                    {
-                        values: [{
-                            label: foodTypeMap[1],
+                selectPartyTypeVisible: false,
+                partyTypeSlots: [{values: [
+                        {
+                            label: partyTypeMap[1],
                             val: 1
                         }, {
-                            label: foodTypeMap[2],
+                            label: partyTypeMap[2],
                             val: 2
-                        }],
-                        defaultIndex: 0,
-                        flex: 1
-                    }
-                ],
+                        }, {
+                            label: partyTypeMap[3],
+                            val: 3
+                        }
+                    ], flex: 1, defaultIndex: 0}]
             };
         },
         computed: {
@@ -236,10 +231,18 @@
                 }
             },
             joinFeeNumber(){
+                if(this.model.partyType === 3) {
+                    return 0;
+                }
+                let partyUpRate = 0;
+                // 打赏聚会才有收益比例
+                if(this.model.partyType === 1) {
+                    partyUpRate = +this.config.partyUpRate;
+                }
                 if(this.model.addressType !== 3) {
-                    return Math.ceil(this.model.feePer * this.model.partyTableNum * (100 + +this.config.partyUpRate) / 100 / this.model.partyNumber);
+                    return Math.ceil(this.model.feePer * this.model.partyTableNum * (100 + partyUpRate) / 100 / this.model.partyNumber);
                 }else {
-                    return Math.ceil((this.model.feePer * this.model.partyTableNum + this.model.addressFee) * (100 + +this.config.partyUpRate) / 100 / this.model.partyNumber);
+                    return Math.ceil((this.model.feePer * this.model.partyTableNum + this.model.addressFee) * (100 + partyUpRate) / 100 / this.model.partyNumber);
                 }
             },
             joinFee(){
@@ -275,7 +278,68 @@
             },
             showFoodType(){
                 return foodTypeMap[this.model.foodType];
-            }
+            },
+            partyTypeText(){
+                return partyTypeMap[this.model.partyType];
+            },
+            addressTypeSlots(){
+                if(this.model.partyType === 2) {
+                    return [{
+                        values: [{
+                            label: addTypeCNMap[2],
+                            val: 2
+                        }, {
+                            label: addTypeCNMap[3],
+                            val: 3
+                        }],
+                        defaultIndex: 0,
+                        flex: 1
+                    }];
+                } else {
+                    return [{
+                        values: [{
+                            label: addTypeCNMap[1],
+                            val: 1
+                        }, {
+                            label: addTypeCNMap[2],
+                            val: 2
+                        }, {
+                            label: addTypeCNMap[3],
+                            val: 3
+                        }],
+                        defaultIndex: 0,
+                        flex: 1
+                    }];
+                }
+            },
+            foodTypeSlots(){
+                if(this.model.addressType === 1 && this.model.partyType !== 3) {
+                    return [
+                        {
+                            values: [{
+                                label: foodTypeMap[1],
+                                val: 1
+                            }, {
+                                label: foodTypeMap[2],
+                                val: 2
+                            }],
+                            defaultIndex: 0,
+                            flex: 1
+                        }
+                    ]
+                }else {
+                    return [
+                        {
+                            values: [{
+                                label: foodTypeMap[1],
+                                val: 1
+                            }],
+                            defaultIndex: 0,
+                            flex: 1
+                        }
+                    ]
+                }
+            },
         },
         methods: {
             ...mapActions([SET_PARTY_META]),
@@ -358,6 +422,9 @@
             onAddressTypeChange(){
                 this.model.address = '';
                 this.model.partyPoster = [];
+                if(this.model.addressType !== 1) {
+                    this.model.foodType = 1;
+                }
             },
             selectDinnerFee(){
                 this.selectDinnerFeeVisible = true;
@@ -382,6 +449,8 @@
                 });
                 this.uploadImg(imgs[0]).then(res => {
                     this.model.localBgImg = res.img;
+                    this.model.selectedBgImg = this.model.localBgImg;
+                    this.model.selectedBgPageIndex = -1;
                     Indicator.close();
                 }, ()=>{
                     Toast({
@@ -410,6 +479,35 @@
                     });
                     Indicator.close();
                 });
+            },
+            onConfirmPartyType(value){
+                if(this.model.partyType !== value[0].val) {
+                    this.model.partyType = value[0].val;
+                    // 如果选择了聚会类型为AA制聚会
+                    if(this.model.partyType === 2) {
+                        //如果当前选择的地址为自有地址
+                        if(this.model.addressType === 1) {
+                            //修改地址为平台地址，AA制聚会不允许选择自有场地
+                            this.model.addressType = 2;
+                            this.model.address = '';
+                            this.model.partyPoster = [];
+                            //不允许选择自有场地时，同时不允许选择自定义菜单
+                            if(this.model.foodType === 2) {
+                                this.model.foodType = 1;
+                            }
+                        }
+                    } else if (this.model.partyType === 3) {
+                        // 如果是免费聚会，只允许使用平台菜单
+                        if(this.model.foodType === 2) {
+                            this.model.foodType = 1;
+                        }
+                    }
+                }
+            },
+            deleteLocalImg(){
+                this.model.localBgImg = '';
+                this.model.selectedBgImg = '';
+                this.model.selectedBgPageIndex = '';
             },
             nextStep(){
                 let validationList = [
@@ -445,7 +543,8 @@
                         descTwo: '2',
                         descThree: '3',
                         videoContent: this.model.partyVideo,
-                        placetype: this.model.addressType
+                        placetype: this.model.addressType,
+                        party_type: this.model.partyType
                     };
                     if(this.model.foodType === 2) {
                         releaseParam.pic_ownfood = this.model.partyFoods;
@@ -454,14 +553,42 @@
                         releaseParam.placecost = this.model.addressFee;
                     }
                     api.releaseParty(releaseParam).then(res => {
-                        this.$router.push({
-                            name: 'ShareParty',
-                            params: {
-                                id: res.data.partyId
-                            }
-                        });
+                        if(this.model.partyType === 3) {
+                            //免费聚会需要先支付才能完成发布
+                            api.joinParty({
+                                anonymous: 0,
+                                cost: this.model.feePer * this.model.partyTableNum + this.model.addressFee,
+                                number: this.model.partyNumber,
+                                partyId: res.data.partyId,
+                                remark: ''
+                            }).then(resp => {
+                                this.$router.push({
+                                    name: 'Pay',
+                                    params: {
+                                        type: `party@${res.data.partyId}`,
+                                        id: resp.data.applyId,
+                                        money: resp.data.money
+                                    },
+                                    query: {
+                                        isNiming: 0
+                                    }
+                                });
+                            }, ()=> {
+                                window.commonToast({
+                                    message: '创建聚会失败，请重试',
+                                    position: 'bottom'
+                                });
+                            });
+                        }else {
+                            this.$router.push({
+                                name: 'ShareParty',
+                                params: {
+                                    id: res.data.partyId
+                                }
+                            });
+                        }
                     }, (res)=>{
-                        Toast({
+                        window.commonToast({
                             message: res.msg,
                             position: 'bottom'
                         });
@@ -562,6 +689,16 @@
                         &.checked {
                             background-image: ~"url(../assets/image/chose.png)";
                         }
+                    }
+                    .delete-local-img-btn {
+                        position: absolute;
+                        top: 3/37.5rem;
+                        left: 3/37.5rem;
+                        width: 20/37.5rem;
+                        height: 20/37.5rem;
+                        background-image: ~"url(../assets/image/delete-icon.png)";
+                        z-index: 2;
+                        background-size: 100% 100%;
                     }
                 }
                 .bg-images-item {

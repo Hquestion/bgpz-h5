@@ -75,16 +75,26 @@
             initPartyData(){
                 api.getPartyDetail(this.payTypeId).then(res => {
                     this.projectData = res.data;
+                    this.wxconfig();
+                    if(this.projectData.partyType === 3) {
+                        this.hideMenu(['menuItem:share:timeline', 'menuItem:share:qq', 'menuItem:share:weiboApp', 'menuItem:share:QZone']);
+                    }
                     this.initShareCfg({
                         description: this.projectData.description,
                         theme: this.projectData.theme,
-                        href: `${config.partyDetailUrl}${this.payTypeId}`,
+                        href: config.partyDetailUrl(this.payTypeId, localStorage.getItem('openid')),
                         shareImg: this.projectData.picTheme,
                         successCb(){
                             this.isShared = true;
-                            window.localStorage.removeItem('noSharedParty');
-                            this.$router.replace({
-                                name: 'Party'
+                            api.userSharePartyPay(this.$route.params.id).then(res => {
+                                this.$router.replace({
+                                    name: 'Party'
+                                });
+                            }, ()=>{
+                                commonToast({
+                                    message: '操作失败，请重试',
+                                    position: 'bottom'
+                                });
                             });
                         },
                         failCb(){
@@ -107,12 +117,24 @@
             let typeId = this.$route.params.type.split('@')[1];
             this.payType = typeName;
             this.payTypeId = typeId;
+            //分享hack
+            if(!this.$route.query.refresh) {
+                let refreshHref;
+                let queryIndex = location.href.lastIndexOf('?');
+                let hashIndex = location.href.lastIndexOf('#');
+                if(hashIndex > queryIndex) {
+                    refreshHref = location.href + '?refresh=1';
+                }else {
+                    refreshHref = location.href.slice(0, queryIndex + 1) + 'refresh=1&' + location.href.slice(queryIndex + 1);
+                }
+                window.location.href = refreshHref;
+                location.reload();
+                return;
+            }
             if(+this.$route.query.isNiming !== 1) {
-                window.localStorage.setItem('noSharedParty', JSON.stringify({
-                    id: this.payTypeId,
-                    orderId: this.$route.params.id
-                }));
+                this.isShared = false;
             }else {
+                api.userSharePartyPay(this.$route.params.id);
                 this.isShared = true;
             }
             this.init();
@@ -169,6 +191,7 @@
             bottom: 0;
             padding-top: 20/37.5rem;
             border-top: 1px solid #dedede;
+            z-index: 10;
             .golden {
                 color: @golden;
                 font-size: 14/37.5rem;
