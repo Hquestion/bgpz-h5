@@ -1,11 +1,11 @@
 <template>
     <div class="pre-order">
         <bg-header title="立即预定"></bg-header>
-        <order-brief-card :package-info.once="selectPackage" :food-info.once="banquetFoods"></order-brief-card>
+        <order-brief-card :package-info.once="selectPackage" :food-info.once="banquetFoods" :price="allFoodsPrice"></order-brief-card>
         <div class="order-form">
             <bg-cell arrow="true" @click.native.prevent.stop="selectTimeVisible = true">
                 <div slot="left">时间</div>
-                <bg-input slot="middle" type="text" placeholder="请选择" reverse="true" v-model="banquetTime" read-only="true"></bg-input>
+                <bg-input slot="middle" type="text" :placeholder="orderPreTime" reverse="true" v-model="banquetTime" read-only="true"></bg-input>
             </bg-cell>
             <bg-cell arrow="true" @click.native.prevent.stop="selectAddress">
                 <div slot="left">地点</div>
@@ -51,13 +51,20 @@
                     <div class="price">￥{{somerwaerMoney}}元</div>
                 </div>
             </bg-cell>
-            <bg-cell :arrow="true">
+            <bg-cell :arrow="true" @click.native.prevent.stop="teaPickerVisible = true">
+                <div slot="left">茶艺师</div>
+                <div class="radio-picker" slot="middle">
+                    <div class="count">&times;{{teaCount}}</div>
+                    <div class="price">￥{{teaMoney}}元</div>
+                </div>
+            </bg-cell>
+            <bg-cell :arrow="true" style="display: none;">
                 <div slot="left">优惠券</div>
                 <bg-input slot="middle" type="text" placeholder="请选择" reverse="true" v-model="coupon" read-only="true"></bg-input>
             </bg-cell>
-            <bg-cell :arrow="true">
+            <bg-cell :arrow="true" @click.native.prevent.stop="previewServerDesc(serverDesc)">
                 <div slot="left">服务说明</div>
-                <div class="radio-picker" slot="middle">
+                <div class="server-desc" slot="middle">
                     <span>{{serverDesc.name}}</span>
                 </div>
             </bg-cell>
@@ -73,6 +80,7 @@
         <popup-picker v-model="cookerPickerVisible" :picker-slots="cookerSlot" title="请选择厨师" @data-change="setCookerCount"></popup-picker>
         <popup-picker v-model="waiterPickerVisible" :picker-slots="waiterSlot" title="请选择服务员" @data-change="setWaiterCount"></popup-picker>
         <popup-picker v-model="somerwaerPickerVisible" :picker-slots="somerwaerSlot" title="请选择侍酒师" @data-change="setSomerwaerCount"></popup-picker>
+        <popup-picker v-model="teaPickerVisible" :picker-slots="somerwaerSlot" title="请选择茶艺师" @data-change="setTeaCount"></popup-picker>
         <popup-picker v-model="tableNumPickerVisible" :picker-slots="tableNumSlot" title="请选择场地类型" @data-change="setTablePeopleCount"></popup-picker>
     </div>
 </template>
@@ -116,7 +124,8 @@
                 somerwaerSlot: [{values: [{label: '不需要', value: 0}, {label: '1名', value: 1}, {label: '2名', value: 2}], flex: 1, defaultIndex: 1}],
                 tableNumPickerVisible: false,
                 isVip: false,
-                vipAvaliableTime: 0
+                vipAvaliableTime: 0,
+                teaPickerVisible: false
             };
         },
         computed: {
@@ -149,6 +158,9 @@
                 somerwaerCount(state){
                     return state.banquet.somerwaerCount;
                 },
+                teaCount(state){
+                    return state.banquet.teaCount;
+                },
                 tableNumSlot(){
                     return [{
                         values: range(1, 100).map(item => ({label: `${item}人`, value: item})),
@@ -172,13 +184,16 @@
                 return this.$store.state.banquet.banquetFoods;
             },
             cookerMoney(){
-                return this.config.noCouponServerMoney * +this.cookerCount;
+                return this.config.noCouponServerMoney * +this.cookerCount * this.$store.state.banquet.tableCount;
             },
             waiterMoney(){
                 return this.config.serverMoney * +this.waiterCount;
             },
             somerwaerMoney(){
                 return this.config.sommMoney * +this.somerwaerCount;
+            },
+            teaMoney(){
+                return this.config.teaMoney * +this.teaCount;
             },
             allFoodsPrice(){
                 let validationMoney = 0;
@@ -191,7 +206,7 @@
             totalOrderMoney(){
                 let validationMoney = 0;
                 this.$store.state.banquet.validationFoods.forEach(item => validationMoney += +item.price);
-                let price = this.allFoodsPrice + this.cookerMoney + this.waiterMoney + this.somerwaerMoney + this.addrPrice;
+                let price = this.allFoodsPrice + this.cookerMoney + this.waiterMoney + this.somerwaerMoney + this.addrPrice + this.teaMoney;
                 if(this.vipAvaliableTime > 0) {
                     price -= this.cookerMoney * Math.min(this.vipAvaliableTime, this.$store.state.banquet.tableCount);
                 }
@@ -199,6 +214,13 @@
             },
             freeTime(){
                 return Math.min(this.vipAvaliableTime, this.$store.state.banquet.tableCount);
+            },
+            orderPreTime(){
+                if(this.$route.params.scence === 'banquet') {
+                    return `请提前${+this.config.minBanquetOrderTime / 60 / 60}小时下单`;
+                }else {
+                    return `请提前${+this.config.minOrderTimeToStartTime / 60 / 60}小时下单`;
+                }
             }
         },
         methods: {
@@ -209,11 +231,13 @@
                 'setSomerwaerCount',
                 'setTablePeopleCount',
                 'setBanquetFoods',
-                'selectBanquetPackage'
+                'selectBanquetPackage',
+                'setTeaCount',
+                'setFoodValidationResult'
             ]),
             init(){
                 let configParam = ['serverMoney','teaMoney', 'sommMoney','tableDefaultNumber','isCouponServerMoney',
-                    'noCouponServerMoney','minOrderTimeToStartTime','maxOrderTimeToStartTime','limitMA'];
+                    'noCouponServerMoney','minOrderTimeToStartTime','maxOrderTimeToStartTime','limitMA','minBanquetOrderTime'];
                 let dictionParam =['banquetNote','banquetTimeList'];
                 api.getCfg(configParam).then(res => {
                     this.config = res.data.list;
@@ -221,7 +245,7 @@
                         this.banquetNote = res.data.list.find(item => item.tag === 'banquetNote');
                         this.banquetTimeList = res.data.list.find(item => item.tag === 'banquetTimeList');
                         this.config.timeList = this.banquetTimeList.sonList;
-                        this.timeSlots = this.generateTimeSlots();
+                        this.timeSlots = this.generateTimeSlots(this.$route.params.scence);
                     });
                 });
 
@@ -276,6 +300,36 @@
                 });
             },
             nextStep(){
+                //如果是高级私宴定制，则已经检验过菜品，直接下单
+                if(this.$route.params.scence === 'banquet') {
+                    this.doOrder();
+                }else {
+                    //否则，需要检验菜品，如果通过则正常下单，否则需要跳转检验菜品页面
+                    api.verifyFoodMatchNumberOfPeople({
+                        people_num: this.$store.state.banquet.peopleCount,
+                        table_num: this.$store.state.banquet.tableCount,
+                        company_id: this.$store.state.banquet.selectPackage.companyid,
+                        modelList: this.banquetFoods.foods.map(item => {
+                            return {
+                                foodid: item.food.id,
+                                category_id: item.cate,
+                                food_num: item.count
+                            };
+                        })
+                    }).then(res => {
+                        this.doOrder();
+                    },(res)=>{
+                        this.setFoodValidationResult(res.data);
+                        this.$router.push({
+                            name: 'BanquetFoodValidation',
+                            params: {
+                                scene: this.$route.params.scence
+                            }
+                        });
+                    });
+                }
+            },
+            doOrder(){
                 //调用下单接口
                 let foodList = this.banquetFoods.foods.map(item => {
                     return {
@@ -298,12 +352,14 @@
                     time: this.$store.state.banquet.banquetTime,
                     waiterNumber: this.waiterCount,
                     sommNumber: this.somerwaerCount,
-                    teaNumber: 0,
+                    teaNumber: this.teaCount,
                     remark: '',
                     packagePrice: this.allFoodsPrice,
                     companyPrice: this.addrPrice
                 };
                 api.submitBanquetOrder(orderParam).then(res => {
+                    //下单完成后，重置桌数人数
+                    this.setTablePeopleCount([{value: 10}, {value: 1}]);
                     this.$router.push({
                         name: 'BanquetPay',
                         query: {
@@ -316,6 +372,15 @@
                         message: res.msg,
                         position: 'bottom'
                     });
+                });
+            },
+            previewServerDesc(data){
+                this.$router.push({
+                    name: 'PreviewHtml',
+                    query: {
+                        href: encodeURIComponent(data.url),
+                        title: '服务说明'
+                    }
                 });
             }
         },
@@ -376,6 +441,12 @@
     .vip-tip {
         color: @golden;
         font-size: 12/37.5rem;
+    }
+    .server-desc {
+        width: 6rem;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
     }
 }
 </style>

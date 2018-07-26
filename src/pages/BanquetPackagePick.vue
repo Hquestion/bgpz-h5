@@ -36,7 +36,7 @@
             ]),
             init(){
                 let {costPer, foodSeries, foodSpecial, peopleCount} = this.$store.state.banquet;
-                let price = +peopleCount * +costPer;
+                let price = +costPer;
                 if(this.$route.query.scene === 'package') {
                     api.getPackageList().then(res => {
                         this.packageList = res.data.list;
@@ -53,6 +53,9 @@
                     name: 'PackageDetail',
                     params: {
                         id: pack.id
+                    },
+                    query: {
+                        scene: this.$route.query.scene || 'banquet'
                     }
                 });
             }

@@ -27,19 +27,22 @@ export default {
         }
         let that = this;
         return new Promise(function(resolve, reject){
-            Vue.http({
+            let opt = {
                 url: reqUrl,
                 method: 'POST',
                 body: data,
-                ignore: !!ignoreLoading,
-                headers: {
+            };
+            if(reqUrl.indexOf('998') < 0) {
+                opt.ignore = !!ignoreLoading;
+                opt.headers = {
                     client: '1',
                     cityid: '1',
                     latitude: 0,
                     longitude: 0,
                     token: localStorage.getItem('token')
-                }
-            }).then(function(res){
+                };
+            }
+            Vue.http(opt).then(function(res){
                 that.handleResponse(res).then(handleRes => {
                     resolve(handleRes);
                 }, handleRes => {
@@ -67,19 +70,22 @@ export default {
         }
         let that = this;
         return new Promise(function(resolve, reject){
-            Vue.http({
+            let opt = {
                 url: reqUrl,
                 method: 'GET',
                 params: data,
-                ignore: !!ignoreLoading,
-                headers: {
+            };
+            if(reqUrl.indexOf('998') < 0) {
+                opt.ignore = !!ignoreLoading;
+                opt.headers = {
                     client: '1',
                     cityid: '1',
                     latitude: 0,
                     longitude: 0,
                     token: localStorage.getItem('token')
-                }
-            }).then(function(res){
+                };
+            }
+            Vue.http(opt).then(function(res){
                 that.handleResponse(res).then(handleRes => {
                     resolve(handleRes);
                 }, handleRes => {

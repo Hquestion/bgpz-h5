@@ -8,7 +8,7 @@
             <div class="price-count-box">
                 <div class="food-price">￥<span v-text="food.price"></span></div>
                 <div class="food-count">
-                    <number-input v-model="food.count" @plus.user="onAddToCart" @minus.user="onRemoveFromCart"/>
+                    <number-input v-model="food.count" @plus.user="onAddToCart" @minus.user="onRemoveFromCart" :min="0"/>
                 </div>
             </div>
         </div>

@@ -16,7 +16,7 @@
                 <div class="kitchen-extension-container">
                     <div class="kitchen-extension" v-for="(extension, index) in extensionList" :key="index">
                         <h3>{{extension.ExtensionName}}</h3>
-                        <bg-checkbox-group>
+                        <bg-checkbox-group :single="extension.ExtensionType === 1">
                             <bg-checkbox-item v-for="(item, index) in extension.DataList" :key="index" v-model="item.isChecked">
                                 {{item.select_name}}
                             </bg-checkbox-item>

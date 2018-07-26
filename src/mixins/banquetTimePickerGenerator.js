@@ -3,8 +3,9 @@ import {range, getMonthDays} from '../util';
 
 export default {
     methods: {
-        generateTimeSlots(defaultVal){
-            let startDate = dayjs().add(+this.config.minOrderTimeToStartTime, 'second');
+        generateTimeSlots(scene){
+            this.toUseStartTime = scene === 'banquet' ? +this.config.minBanquetOrderTime : +this.config.minOrderTimeToStartTime;
+            let startDate = dayjs().add(+this.toUseStartTime, 'second');
             let lastEndTime = dayjs();
             let timeList = this.config.timeList;
             let time = timeList[timeList.length -1].value.split(':');
@@ -39,7 +40,7 @@ export default {
         },
         adjustDate(picker, value){
             // 时间选择器改变时，需要调整日期使得只能在开始-结束时间范围内
-            let startDate = dayjs().add(+this.config.minOrderTimeToStartTime, 'second');
+            let startDate = dayjs().add(+this.toUseStartTime, 'second');
             let startDay = startDate.set('hour', 0).set('minute', 0).set('second', 0);
             let timeList = this.config.timeList;
             if(timeList) {

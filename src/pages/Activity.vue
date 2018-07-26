@@ -122,7 +122,7 @@
         data(){
             return {
                 packages: foodPackages,
-                endDate: new Date('2018/07/27 20:00:00'),
+                endDate: new Date('2018/08/27 20:00:00'),
                 startHour: 11,
                 endHour: 19,
                 username: '',
@@ -294,11 +294,20 @@
                 remark.isActive = !remark.isActive;
             },
             onOrder(){
-                myToast({
-                    message: '系统维护',
-                    position: 'bottom'
-                });
-                return;
+                // myToast({
+                //     message: '系统维护',
+                //     position: 'bottom'
+                // });
+                // return;
+                let now = new Date();
+                let orderEndDate = new Date('2018/7/28 00:00:00');
+                if(now > orderEndDate) {
+                    myToast({
+                        message: '活动已结束，如有疑问请联系客服',
+                        position: 'bottom'
+                    });
+                    return;
+                }
                 if(!this.coupon) {
                     myToast({
                         message: '请输入兑换码编号',
@@ -363,7 +372,7 @@
                                 position: 'bottom'
                             });
                         });
-                    }, ()=>{
+                    }, (res)=>{
                         myToast({
                             message: '兑换码不存在或者已失效！',
                             position: 'bottom'

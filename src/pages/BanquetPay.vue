@@ -2,7 +2,8 @@
     <div class="banquet-pay">
         <bg-header title="支付"></bg-header>
         <order-brief-card :package-info.once="selectPackage" :food-info.once="banquetFoods"
-                          :avatar="orderDetail.packageAvatar" :name="orderDetail.name" :price="orderDetail.price" :num="orderDetail.foodNumber"></order-brief-card>
+                          :avatar="orderDetail.packageAvatar" :name="orderDetail.packageName || orderDetail.name"
+                          :price="orderDetail.price" :num="orderDetail.foodNumber"></order-brief-card>
         <bg-white-space height="0.26667rem"></bg-white-space>
         <bg-cell :arrow="false">
             <div slot="left">时间</div>
@@ -22,7 +23,7 @@
                     成为<span class="red">年费会员</span>
                 </div>
                 <div>
-                    免<span class="red">一年</span>(每桌限4桌，连续12个月)厨师服务费(268元/次)，并且<span class="red">赠送9800元账户余额</span>
+                    免<span class="red">一年</span>(每月限4桌，连续12个月)厨师服务费(268元/次)，并且<span class="red">赠送9800元账户余额</span>
                 </div>
             </div>
             <div class="vip-price">
@@ -36,7 +37,7 @@
             <div class="yu_e-box">
                 <img src="../assets/image/black.png">
                 <div class="yu_e-info">
-                    <div>账户余额￥{{accountMoney}}元</div>
+                    <div>账户余额￥{{accountMoney}}元<span v-show="isVipChecked">+￥9800</span></div>
                     <div class="tip" v-show="!isBanlanceEnough || isVipChecked">
                         <span v-show="!isBanlanceEnough && toRechargeMoney <= 0 && !isVipChecked">(账户余额不足，请在下方充值)</span>
                         <span v-show="!isBanlanceEnough && toRechargeMoney > 0 && !isVipChecked">支付后余额：{{moneyAfterRecharge}}</span>
@@ -93,7 +94,7 @@
             </div>
             <div class="pay-desc">
                 <div>网银快捷支付</div>
-                <div>有银行卡就能支付，单笔限额50000.00元</div>
+                <div style="display: none;">有银行卡就能支付，单笔限额10000.00元</div>
             </div>
             <div class="checkbox" :class="{active: isPayByNetBank}"></div>
         </div>

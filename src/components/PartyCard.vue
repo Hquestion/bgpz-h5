@@ -2,7 +2,7 @@
     <div class="party-card" :class="{'to-join': isRunning, 'join-end': isEnd, 'finish': isFinish}">
         <div class="party-img">
             <img :src="data.picTheme" @click.prevent>
-            <img src="../assets/image/video.png" class="video-indicator" v-if="data.videoContent && data.videoContent.length > 0">
+            <img src="../assets/image/video.png" class="video-indicator" v-if="video && video.length > 0">
         </div>
         <div class="party-footer">
             <div class="avatar">
@@ -56,6 +56,9 @@
             },
             isFinish(){
                 return +this.data.status === 3;
+            },
+            video(){
+                return this.data.videoContent && JSON.parse(this.data.videoContent);
             }
         }
     }

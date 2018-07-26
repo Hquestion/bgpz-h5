@@ -58,7 +58,7 @@
     import BgBadge from '../components/BgBadge';
     import api from '../api';
     import BgHeader from "../components/BgHeader";
-    import {mapGetters, mapActions} from 'vuex';
+    import {mapGetters, mapActions, mapState} from 'vuex';
     export default {
         name: "BanquetFoodValidation",
         components: {
@@ -77,8 +77,44 @@
         },
         computed: {
             ...mapGetters([
-                'tablePeopleNum'
+                'tablePeopleNum',
+                'banquetFoods'
             ]),
+            ...mapState({
+                banquetAddress: state => {
+                    let addrInfo =  state.banquet.banquetAddressInfo || {};
+                    let stateName = addrInfo.stateInfo && addrInfo.stateInfo.name || '';
+                    let cityName = addrInfo.cityInfo && addrInfo.cityInfo.name || '';
+                    let regionName = addrInfo.regionInfo && addrInfo.regionInfo.name || '';
+                    return `${stateName}${cityName}${regionName}${addrInfo.addr || ''}`
+                },
+                banquetPhone(state){
+                    return `${state.banquet.banquetAddressInfo.phone || ''}`;
+                },
+                banquetUserName(state){
+                    return `${state.banquet.banquetAddressInfo.name || ''}`;
+                },
+                cookerCount: state => {
+                    return state.banquet.cookerCount;
+                },
+                waiterCount(state){
+                    return state.banquet.waiterCount;
+                },
+                somerwaerCount(state){
+                    return state.banquet.somerwaerCount;
+                },
+                teaCount(state){
+                    return state.banquet.teaCount;
+                }
+            }),
+            allFoodsPrice(){
+                let validationMoney = 0;
+                this.$store.state.banquet.validationFoods.forEach(item => validationMoney += +item.price);
+                return this.banquetFoods.price + validationMoney;
+            },
+            addrPrice(){
+                return +this.$store.state.banquet.banquetAddressInfo.price || 0;
+            },
             validationRes(){
                 return this.$store.state.banquet.foodValidationResult;
             },
@@ -121,7 +157,11 @@
         methods: {
             ...mapActions([
                 'addValidationFood',
-                'deleteValidationFood'
+                'deleteValidationFood',
+                'setFoodValidationResult',
+                'setBanquetFoods',
+                'selectBanquetPackage',
+                'setTablePeopleCount'
             ]),
             getFoodListByCate(cate, companyId){
                 return new Promise((resolve, reject) => {
@@ -132,6 +172,25 @@
                 });
             },
             init(){
+                if(this.$route.params.scene === 'company') {
+                    this.setFoodValidationResult(JSON.parse(localStorage.getItem('orderFoodValidationRes')));
+                    let serviceList = JSON.parse(localStorage.getItem('foodOrderCar'));
+                    this.setBanquetFoods({
+                        foods: serviceList.ServerList.map(item => {
+                            return {
+                                food: {
+                                    id: item.id
+                                },
+                                count: item.num,
+                                type: item.type,
+                                cate: item.cate
+                            }
+                        }),
+                        price: serviceList.price
+                    });
+                    let _package = JSON.parse(localStorage.getItem('packageDetail'));
+                    this.selectBanquetPackage(_package);
+                }
                 this.getFoodCateList(this.companyId).then(res => {
                     this.categoryList = res;
                     this.currentCate = res[0] && res[0].id || '';
@@ -191,13 +250,64 @@
                 });
             },
             nextStep(){
-                this.$router.push({
-                    name: 'PreOrder',
-                    params: {
-                        scence: 'banquet'
-                    }
-                })
-            }
+                //如果是高级私宴定制，则跳转下单页面，选择其他信息
+                if(this.$route.params.scene === 'banquet') {
+                    this.$router.push({
+                        name: 'PreOrder',
+                        params: {
+                            scence: this.$route.params.scene || 'banquet'
+                        }
+                    });
+                }else {
+                    //否则则需要调下单接口进行下单
+                    this.doOrder();
+                }
+            },
+            doOrder(){
+                //调用下单接口
+                let foodList = this.banquetFoods.foods.map(item => {
+                    return {
+                        id: item.food.id,
+                        num: item.count,
+                        type: 1,
+                        price: item.price
+                    };
+                });
+                let orderParam = {
+                    ServerList: JSON.stringify(foodList),
+                    address: this.banquetAddress,
+                    companyId: this.$store.state.banquet.selectPackage.companyid,
+                    couponId: '',
+                    number: this.$store.state.banquet.tableCount,
+                    personNumber: this.$store.state.banquet.peopleCount,
+                    orderLinkMan: this.banquetUserName,
+                    orderPhone: this.banquetPhone,
+                    packageId: this.$store.state.banquet.selectPackage.id,
+                    time: this.$store.state.banquet.banquetTime,
+                    waiterNumber: this.waiterCount,
+                    sommNumber: this.somerwaerCount,
+                    teaNumber: this.teaCount,
+                    remark: '',
+                    packagePrice: this.allFoodsPrice,
+                    companyPrice: this.addrPrice
+                };
+                api.submitBanquetOrder(orderParam).then(res => {
+                    //下单完成后，重置桌数人数
+                    this.setTablePeopleCount([{value: 0}, {value: 0}]);
+                    this.$router.push({
+                        name: 'BanquetPay',
+                        query: {
+                            orderId:  res.data.orderId,
+                            money: res.data.price
+                        }
+                    });
+                }, (res)=>{
+                    window.commonToast({
+                        message: res.msg,
+                        position: 'bottom'
+                    });
+                });
+            },
         },
         mounted(){
             this.init();

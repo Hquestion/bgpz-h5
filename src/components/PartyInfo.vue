@@ -34,6 +34,12 @@
             </div>
         </div>
         <div class="row">
+            <div class="label">聚会类型</div>
+            <div class="label-content">
+
+            </div>
+        </div>
+        <div class="row">
             <div class="label">聚会时间</div>
             <div class="label-content">
                 {{data.partyTime | dateFormat('sec')}}

@@ -25,6 +25,7 @@ import OrderExtension from '../pages/OrderExtension';
 import BanquetPay from '../pages/BanquetPay';
 import BanquetFoodValidation from '../pages/BanquetFoodValidation';
 import LlPayForm from '../pages/LlPayForm';
+import PreviewHtml from '../pages/PreviewHtml';
 
 const routerCfg = [
     {
@@ -149,6 +150,10 @@ const routerCfg = [
         path: '/llpay-form',
         name: 'LlPayForm',
         component: LlPayForm
+    }, {
+        path: '/preview-html',
+        name: 'PreviewHtml',
+        component: PreviewHtml
     }
 ];
 

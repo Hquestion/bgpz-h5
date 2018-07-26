@@ -16,7 +16,7 @@
         </div>
         <bg-article-title title="套餐内容"></bg-article-title>
         <div class="activity-container" :style="{'background-image': `url(${activity.acteimage})`}">
-            <swiper :options="swiperOpt" class="food-swiper" ref="activitySwiper">
+            <swiper :options="swiperOptActivity" class="food-swiper" ref="activitySwiper">
                 <swiper-slide v-for="(food, index) in activity.typeList" :key="index">
                     <div class="activity-food-item">
                         <img :src="food.imageUrl">
@@ -109,8 +109,8 @@
                 },
                 banquetFoodsPrice: 0,
                 activity: {},
-                swiperOpt: {
-                    autoplay: false
+                swiperOptActivity: {
+                    autoplay: true
                 },
                 toReplaceFood: null,
                 toAddCate: null,
@@ -159,7 +159,7 @@
                 api.getPackageDetail(this.$route.params.id).then(res1 => {
                     this.packageMeta = res1.data;
                     this.banquetFoodsPrice = +this.packageMeta.price;
-                    if(this.$route.query.scene === 'company') {
+                    if(this.$route.query.scene === 'package') {
                         res1.data.companyid = res1.data.companyid || res1.data.companyId;
                         this.selectBanquetPackage(res1.data);
                     }
@@ -193,34 +193,44 @@
                 });
             },
             doOrder(){
-                api.verifyFoodMatchNumberOfPeople({
-                    people_num: this.$store.state.banquet.peopleCount,
-                    table_num: this.$store.state.banquet.tableCount,
-                    company_id: this.$store.state.banquet.selectPackage.companyid,
-                    modelList: this.banquetFoods.foods.map(item => {
-                        return {
-                            foodid: item.food.id,
-                            category_id: item.cate,
-                            food_num: item.count
-                        };
-                    })
-                }).then(res => {
+                //如果是高级私宴定制，则正常流程，检验菜品，通过后下单，否则提示用户加菜
+                if(this.$route.query.scene === 'banquet') {
+                    api.verifyFoodMatchNumberOfPeople({
+                        people_num: this.$store.state.banquet.peopleCount,
+                        table_num: this.$store.state.banquet.tableCount,
+                        company_id: this.$store.state.banquet.selectPackage.companyid,
+                        modelList: this.banquetFoods.foods.map(item => {
+                            return {
+                                foodid: item.food.id,
+                                category_id: item.cate,
+                                food_num: item.count
+                            };
+                        })
+                    }).then(res => {
+                        this.$router.push({
+                            name: 'PreOrder',
+                            params: {
+                                scence: this.$route.query.scene || 'banquet'
+                            }
+                        });
+                    },(res)=>{
+                        this.setFoodValidationResult(res.data);
+                        this.$router.push({
+                            name: 'BanquetFoodValidation',
+                            params: {
+                                scene: 'banquet'
+                            }
+                        });
+                    });
+                }else {
+                    //如果不是私宴定制，要先跳到下单页面，再选择人数桌数之后再进行菜品检验
                     this.$router.push({
                         name: 'PreOrder',
                         params: {
-                            scence: 'banquet'
+                            scence: this.$route.query.scene || 'banquet'
                         }
                     });
-                },(res)=>{
-                    console.log(res);
-                    this.setFoodValidationResult(res.data);
-                    this.$router.push({
-                        name: 'BanquetFoodValidation',
-                        params: {
-                            scene: 'banquet'
-                        }
-                    });
-                });
+                }
             },
             onChangeFood(food, index, cate){
                 this.editFoodTitle = `将<span class="golden">【${index+1}、${food.name}<span class="red">￥${food.price}</span>】</span>替换为：`;
@@ -244,7 +254,7 @@
                 this.editFoodVisible = true;
                 this.toReplaceFood = null;
                 this.toAddCate = cate;
-                api.getFoodsByCate(cate.typeNumber, this.packageMeta.companyId).then(res => {
+                api.getFoodsByCate(cate.typeId, this.packageMeta.companyId).then(res => {
                     let list = res.data && res.data.list || [];
                     list.forEach(item => item.isChecked = false);
                     this.toChangefoodList = list;

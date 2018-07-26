@@ -283,62 +283,89 @@
                 return partyTypeMap[this.model.partyType];
             },
             addressTypeSlots(){
-                if(this.model.partyType === 2) {
-                    return [{
-                        values: [{
-                            label: addTypeCNMap[2],
-                            val: 2
-                        }, {
-                            label: addTypeCNMap[3],
-                            val: 3
-                        }],
-                        defaultIndex: 0,
-                        flex: 1
-                    }];
-                } else {
-                    return [{
-                        values: [{
-                            label: addTypeCNMap[1],
-                            val: 1
-                        }, {
-                            label: addTypeCNMap[2],
-                            val: 2
-                        }, {
-                            label: addTypeCNMap[3],
-                            val: 3
-                        }],
-                        defaultIndex: 0,
-                        flex: 1
-                    }];
-                }
+                // if(this.model.partyType === 2) {
+                //     return [{
+                //         values: [{
+                //             label: addTypeCNMap[2],
+                //             val: 2
+                //         }, {
+                //             label: addTypeCNMap[3],
+                //             val: 3
+                //         }],
+                //         defaultIndex: 0,
+                //         flex: 1
+                //     }];
+                // } else {
+                //     return [{
+                //         values: [{
+                //             label: addTypeCNMap[1],
+                //             val: 1
+                //         }, {
+                //             label: addTypeCNMap[2],
+                //             val: 2
+                //         }, {
+                //             label: addTypeCNMap[3],
+                //             val: 3
+                //         }],
+                //         defaultIndex: 0,
+                //         flex: 1
+                //     }];
+                // }
+                return [{
+                    values: [{
+                        label: addTypeCNMap[1],
+                        val: 1
+                    }, {
+                        label: addTypeCNMap[2],
+                        val: 2
+                    }, {
+                        label: addTypeCNMap[3],
+                        val: 3
+                    }],
+                    defaultIndex: 0,
+                    flex: 1
+                }];
             },
             foodTypeSlots(){
-                if(this.model.addressType === 1 && this.model.partyType !== 3) {
-                    return [
-                        {
-                            values: [{
-                                label: foodTypeMap[1],
-                                val: 1
-                            }, {
-                                label: foodTypeMap[2],
-                                val: 2
-                            }],
-                            defaultIndex: 0,
-                            flex: 1
-                        }
-                    ]
-                }else {
-                    return [
-                        {
-                            values: [{
-                                label: foodTypeMap[1],
-                                val: 1
-                            }],
-                            defaultIndex: 0,
-                            flex: 1
-                        }
-                    ]
-                }
+                // if(this.model.addressType === 1 && this.model.partyType !== 3) {
+                //     return [
+                //         {
+                //             values: [{
+                //                 label: foodTypeMap[1],
+                //                 val: 1
+                //             }, {
+                //                 label: foodTypeMap[2],
+                //                 val: 2
+                //             }],
+                //             defaultIndex: 0,
+                //             flex: 1
+                //         }
+                //     ]
+                // }else {
+                //     return [
+                //         {
+                //             values: [{
+                //                 label: foodTypeMap[1],
+                //                 val: 1
+                //             }],
+                //             defaultIndex: 0,
+                //             flex: 1
+                //         }
+                //     ]
+                // }
+                return [
+                    {
+                        values: [{
+                            label: foodTypeMap[1],
+                            val: 1
+                        }, {
+                            label: foodTypeMap[2],
+                            val: 2
+                        }],
+                        defaultIndex: 0,
+                        flex: 1
+                    }
+                ]
             },
         },
         methods: {

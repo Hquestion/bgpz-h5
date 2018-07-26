@@ -6,36 +6,36 @@ const packageList = [
         foodList: [{
             categoryName: '冷菜',
             foods: [{
-                foodName: '金陵盐水鸭'
+                foodName: '酱香鸭舌'
             }, {
-                foodName: '洋葱拌木耳'
+                foodName: '话梅仔排'
             }, {
-                foodName: '特色酱猪手'
+                foodName: '生炝苦菊'
             }, {
-                foodName: '巧拌锅巴皮'
+                foodName: '烧汁冰草'
             }]
         }, {
             categoryName: '热菜',
             foods: [{
-                foodName: '农家烧老鹅'
+                foodName: '蒜泥龙虾'
             }, {
-                foodName: '生焗荔浦芋头'
+                foodName: '家乡老鹅'
             }, {
-                foodName: '清蒸小仔鸡'
+                foodName: '黑豆牛筋'
             }, {
-                foodName: '酸汤肥牛'
+                foodName: '清蒸鲈鱼'
             }, {
-                foodName: '豆瓣毛贝锅'
+                foodName: '豆瓣毛豆锅'
             }, {
-                foodName: '香山老豆腐'
+                foodName: '金汤老卤素鸡'
             }, {
-                foodName: '捞汁腰花'
+                foodName: '开洋大煮干丝'
             }, {
-                foodName: '点心一道'
+                foodName: '豉汁炒花蛤'
             }, {
-                foodName: '时蔬一道'
+                foodName: '时蔬2道'
             }, {
-                foodName: '果盘'
+                foodName: '精美果盘'
             }, {
                 foodName: '阳春面'
             }]
@@ -48,36 +48,42 @@ const packageList = [
         foodList: [{
             categoryName: '冷菜',
             foods: [{
-                foodName: '苏式熏鱼'
+                foodName: '广式白切鸡'
             }, {
-                foodName: '腌菜毛豆米'
+                foodName: '秘制酱牛肉'
             }, {
-                foodName: '酱猪手'
+                foodName: '生炝苦菊'
             }, {
-                foodName: '扬州干丝'
+                foodName: '捞汁秋葵'
             }]
         }, {
             categoryName: '热菜',
             foods: [{
-                foodName: '农家烧仔鸡'
+                foodName: '大漠风沙鸡'
             }, {
-                foodName: '农家烧老鹅'
+                foodName: '家乡老鹅'
             }, {
-                foodName: '秘制香芋煲'
+                foodName: '红烧鲈鱼'
             }, {
-                foodName: '豉汁炒花蛤'
+                foodName: '黑豆牛筋'
             }, {
-                foodName: '招牌红烧肉'
+                foodName: '外婆烧鸡公'
             }, {
-                foodName: '卤肉百叶结'
+                foodName: '茶树菇牛柳'
+            }, {
+                foodName: '虎子焖肉'
+            }, {
+                foodName: '风味跳跳骨'
+            }, {
+                foodName: '豆瓣毛豆锅'
             }, {
                 foodName: '时蔬一道'
             }, {
-                foodName: '点心一道'
+                foodName: '精美果盘'
+            }, {
+                foodName: '菊叶蛋汤'
             }, {
                 foodName: '阳春面'
-            }, {
-                foodName: '果盘'
             }]
         }]
     }

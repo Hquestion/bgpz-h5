@@ -8,14 +8,15 @@ const state = {
     banquetType: '1',
     foodSeries: '',
     foodSpecial: '',
-    costPer: 300,
+    costPer: 1600,
     banquetTime: 0,
     cookerCount: 1,
-    waiterCount: 1,
+    waiterCount: 0,
     somerwaerCount: 0,
+    teaCount: 0,
     banquetAddrType: '1',
-    tableCount: 1,
-    peopleCount: 10,
+    tableCount: 0,
+    peopleCount: 0,
     selectPackage: '',
     banquetFoods: {},
     banquetAddressInfo: {},
@@ -37,7 +38,7 @@ const getters = {
         return state.costPer;
     },
     banquetTime(state){
-        return state.banquetTime > 0 ? formatTime(state.banquetTime * 1000) : timePlaceholder;
+        return state.banquetTime > 0 ? formatTime(state.banquetTime * 1000) : '';
     },
     cookerCount(state){
         return state.cookerCount > 0 && `${state.cookerCount}名` || placeHolderText;
@@ -48,11 +49,18 @@ const getters = {
     somerwaerCount(state){
         return state.somerwaerCount > 0 && `${state.somerwaerCount}名` || placeHolderText;
     },
+    teaCount(state){
+        return state.teaCount > 0 && `${state.teaCount}名` || placeHolderText;
+    },
     banquetAddrType:(state) => {
         return state.banquetAddrType;
     },
     tablePeopleNum(state){
-        return `${state.peopleCount}人、${state.tableCount}桌` || placeHolderText;
+        if(state.peopleCount === 0 || state.tableCount === 0) {
+            return placeHolderText;
+        }else {
+            return `${state.peopleCount}人、${state.tableCount}桌`;
+        }
     },
     banquetFoods(state){
         return state.banquetFoods;
@@ -83,6 +91,9 @@ const actions = {
     },
     setSomerwaerCount({commit}, data){
         commit('setSomerwaerCount', data);
+    },
+    setTeaCount({commit}, data){
+        commit('setTeaCount', data);
     },
     setBanquetAddrType({commit}, data){
         commit('setBanquetAddrType', data);
@@ -132,6 +143,9 @@ const mutations = {
     },
     setWaiterCount(state, data){
         state.waiterCount = data[0].value;
+    },
+    setTeaCount(state, data){
+        state.teaCount = data[0].value;
     },
     setSomerwaerCount(state, data){
         state.somerwaerCount = data[0].value;

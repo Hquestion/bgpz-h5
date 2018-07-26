@@ -205,7 +205,7 @@
                         // type: 'progressbar'
                     }
                 },
-                backTo: '',
+                backTo: '/party',
                 packageFoodList: [],
                 commentList: [],
                 commentVisible: false,

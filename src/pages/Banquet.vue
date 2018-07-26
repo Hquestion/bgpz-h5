@@ -6,11 +6,11 @@
             <bg-action-card-group>
                 <bg-action-card-item :active="banquetType === '1'" @click.native="chooseBanquetType('1')">
                     <div slot="title">家宴</div>
-                    <div>{{(banquetType === '1' && costPer > 0) ? `人均${costPer}元` : `人均${config.leastPriceFamilyBanquet}元起`}}</div>
+                    <div>{{(banquetType === '1' && costPer > 0) ? `餐标${costPer}元` : `餐标1600元起`}}</div>
                 </bg-action-card-item>
                 <bg-action-card-item :active="banquetType === '2'" @click.native="chooseBanquetType('2')">
                     <div slot="title">商务宴</div>
-                    <div>{{(banquetType === '2' && costPer > 0) ? `人均${costPer}元` : `人均${config.leastPriceBusinessBanquet}元起`}}</div>
+                    <div>{{(banquetType === '2' && costPer > 0) ? `餐标${costPer}元` : `餐标1600元起`}}</div>
                 </bg-action-card-item>
             </bg-action-card-group>
         </div>
@@ -38,13 +38,13 @@
         <bg-action-card-group>
             <bg-action-card-item :arrow="true" @click.native="selectTimeVisible = true">
                 <div slot="title">宴会时间</div>
-                <span>{{banquetTime}}</span>
+                <span>{{showBanquetTime}}</span>
             </bg-action-card-item>
         </bg-action-card-group>
         <bg-action-card-group>
             <bg-action-card-item :arrow="true" @click.native="cookerPickerVisible = true">
-                <div slot="title">厨&nbsp;师</div>
-                <span>{{cookerCount}}</span>
+                <div slot="title">茶艺师</div>
+                <span>{{teaCount}}</span>
             </bg-action-card-item>
             <bg-action-card-item :arrow="true" @click.native="waiterPickerVisible = true">
                 <div slot="title">服务员</div>
@@ -63,7 +63,7 @@
         <popup-picker v-model="foodSpecialPickerVisible" :picker-slots="foodSpecialSlot" title="请选择特色" @data-change="onSpecialChange"></popup-picker>
         <popup-picker ref="costPicker" v-model="costPickerVisible" :picker-slots="costSlot" title="请选择人均餐标" @data-change="onCostChange"></popup-picker>
         <popup-picker v-model="selectTimeVisible" :picker-slots="timeSlots" title="请选择宴会时间" @change="adjustDate" @data-change="setBanquetTime"></popup-picker>
-        <popup-picker v-model="cookerPickerVisible" :picker-slots="cookerSlot" title="请选择厨师" @data-change="setCookerCount"></popup-picker>
+        <popup-picker v-model="cookerPickerVisible" :picker-slots="teaSlot" title="请选择茶艺师" @data-change="setTeaCount"></popup-picker>
         <popup-picker v-model="waiterPickerVisible" :picker-slots="waiterSlot" title="请选择服务员" @data-change="setWaiterCount"></popup-picker>
         <popup-picker v-model="somerwaerPickerVisible" :picker-slots="somerwaerSlot" title="请选择侍酒师" @data-change="setSomerwaerCount"></popup-picker>
         <popup-picker v-model="addrPickerVisible" :picker-slots="addrSlot" title="请选择场地类型" @data-change="setBanquetAddrType"></popup-picker>
@@ -110,7 +110,8 @@
                 somerwaerPickerVisible: false,
                 somerwaerSlot: [{values: [{label: '不需要', value: 0}, {label: '1名', value: 1}, {label: '2名', value: 2}], flex: 1, defaultIndex: 1}],
                 addrPickerVisible: false,
-                addrSlot: [{values: [{label: addrTypeMap['1'], value: '1'},{label: addrTypeMap['2'], value: '2'}], flex: 1, defaultIndex: 1}],
+                addrSlot: [{values: [{label: addrTypeMap['1'], value: '1'},{label: addrTypeMap['2'], value: '2'}], flex: 1, defaultIndex: 0}],
+                teaSlot: [{values: [{label: '不需要', value: 0}, {label: '1名', value: 1}, {label: '2名', value: 2}], flex: 1, defaultIndex: 0}],
                 tableNumPickerVisible: false,
             }
         },
@@ -125,22 +126,26 @@
                 'waiterCount',
                 'somerwaerCount',
                 'banquetAddrType',
-                'tablePeopleNum'
+                'tablePeopleNum',
+                'teaCount'
             ]),
             banquetAddrTypeLabel(){
                 return addrTypeMap[this.banquetAddrType];
             },
             costSlot(){
                 let slotData;
+                if(!this.config.priceList) {
+                    return [];
+                }
                 if(this.banquetType === '1') {
                     slotData = [{
-                        values: range(+this.config.leastPriceFamilyBanquet || 300, 800, 100).map(item => ({label: `${item}元`, value: item})),
+                        values: this.config.priceList.map(item => ({label: `${item.value}元`, value: item.value})),
                         flex: 1,
                         defaultIndex: 0
                     }];
                 }else {
                     slotData = [{
-                        values: range(+this.config.leastPriceBusinessBanquet || 400, 800, 100).map(item => ({label: `${item}元`, value: item})),
+                        values: this.config.priceList.map(item => ({label: `${item.value}元`, value: item.value})),
                         flex: 1,
                         defaultIndex: 0
                     }];
@@ -157,6 +162,13 @@
                     flex: 1,
                     defaultIndex: 0
                 }];
+            },
+            showBanquetTime(){
+                if(this.banquetTime) {
+                    return this.banquetTime;
+                }else {
+                    return `请提前${+this.config.minBanquetOrderTime / 60 /60}小时下单`;
+                }
             }
         },
         methods: {
@@ -170,7 +182,8 @@
                 'setWaiterCount',
                 'setSomerwaerCount',
                 'setBanquetAddrType',
-                'setTablePeopleCount'
+                'setTablePeopleCount',
+                'setTeaCount'
             ]),
             init(){
                 api.getFoodSeries().then(res => {
@@ -182,20 +195,21 @@
                 Promise.all([
                     api.getCfg(['minOrderTimeToStartTime', 'maxOrderTimeToStartTime', 'cookFamilyBanquet', 'waiterFamilyBanquet', 'sommFamilyBanquet',
                         'cookBusinessBanquet', 'waiterBusinessBanquet', 'sommBusinessBanquet', 'leastPriceFamilyBanquet', 'leastPriceBusinessBanquet',
-                        'leastPriceThirdPlace']),
-                    api.getDiction(['banquetTimeList'])
+                        'leastPriceThirdPlace', 'minBanquetOrderTime']),
+                    api.getDiction(['banquetTimeList', 'banquetPriceList'])
                 ]).then((data) => {
                     let cfg = data[0];
                     let dic = data[1];
                     this.config = {
-                        timeList: dic.data.list[0].sonList
+                        timeList: dic.data.list.find(item => item.tag === 'banquetTimeList').sonList,
+                        priceList: dic.data.list.find(item => item.tag === 'banquetPriceList').sonList
                     };
                     for(let k in cfg.data.list) {
                         this.config[k] = cfg.data.list[k];
                     }
-                    this.timeSlots = this.generateTimeSlots();
+                    this.timeSlots = this.generateTimeSlots('banquet');
                 });
-
+                this.setWaiterCount([{value: 1}]);
             },
             onSeriesChange(value){
                 this.setFoodSeries(value[0].value);
@@ -208,13 +222,15 @@
             },
             chooseBanquetType(type){
                 this.setBanquetType(type);
-                this.setCostPer(this.banquetType === '1' ? 300: 400);
+                this.setCostPer(this.banquetType === '1' ? 1600: 1600);
                 this.costPickerVisible = true;
             },
             nextStep(){
                 let validationList = [
                     {method: 'isNotEmpty', message: '请选择菜系', param: [this.$store.state.banquet.foodSeries]},
                     {method: 'isNotEmpty', message: '请选择特色', param: [this.$store.state.banquet.foodSpecial]},
+                    {method: 'isNotEmpty', message: '请选择人数桌数', param: [this.$store.state.banquet.tableCount]},
+                    {method: 'isNotEmpty', message: '请选择人数桌数', param: [this.$store.state.banquet.peopleCount]},
                     {method: 'isAfterTime', message: '宴会时间不正确', param: [this.$store.state.banquet.banquetTime]},
                 ];
                 if(form.validate(validationList)) {

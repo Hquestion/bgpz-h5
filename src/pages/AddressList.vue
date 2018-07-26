@@ -97,7 +97,9 @@
                 });
             },
             onUseAddress(data){
-                if(this.$route.query.scene === 'banquet' || this.$route.query.scene === 'company') {
+                if(this.$route.query.scene === 'banquet' ||
+                    this.$route.query.scene === 'company' ||
+                    this.$route.query.scene === 'package') {
                     this.setBanquetAddress(data);
                     this.$router.push({
                         name: 'PreOrder',

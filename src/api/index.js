@@ -70,11 +70,13 @@ export default {
     },
     checkActivityCoupon(couponCode){
         return new Promise((resolve, reject) => {
-            httpService.get(config.activityServerUrl + 'api/OrderExtend/IsUseCoupon', {
-                couponCode: couponCode
+            httpService.post(config.activityServerUrl + 'api/OrderExtend/IsUseCoupon', {
+                FLnkID: couponCode
             }, false, true).then(res => {
                 resolve(res);
-            }, reject);
+            }, res=>{
+                reject(res);
+            });
         });
     },
     postOrder(param){
