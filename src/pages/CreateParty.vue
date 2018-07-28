@@ -569,7 +569,7 @@
                         descOne: '1',
                         descTwo: '2',
                         descThree: '3',
-                        videoContent: this.model.partyVideo,
+                        videoContent: this.model.partyVideo && this.model.partyVideo.length > 0 && JSON.stringify(this.model.partyVideo) || '',
                         placetype: this.model.addressType,
                         party_type: this.model.partyType
                     };
