@@ -33,7 +33,9 @@
                     </div>
                     <div class="remark-input">
                         <textarea placeholder="其他信息，比如口味偏好等" v-model="remarkText"></textarea>
+                        <textarea style="margin-top: 0.2667rem;" placeholder="请输入发票抬头及税务登记证号" @click.stop v-model="ticketInfo"></textarea>
                     </div>
+
                 </div>
             </div>
         </div>
@@ -92,7 +94,8 @@
                 extensionList: [],
                 banquetNote: [],
                 money: this.$route.query.money,
-                remarkText: ''
+                remarkText: '',
+                ticketInfo: ''
             };
         },
         computed: {
@@ -140,7 +143,7 @@
                 Promise.all([
                     //更新订单扩展信息
                     api.saveOrderExtension(this.$route.query.orderId, modelList),
-                    api.updateOrderRemark(this.$route.query.orderId, remark)
+                    api.updateOrderRemark(this.$route.query.orderId, remark, this.ticketInfo)
                     //更新订单备注信息
                 ]).then(res => {
                     //跳转订单详情页

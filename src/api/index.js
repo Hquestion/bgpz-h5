@@ -415,10 +415,11 @@ export default {
             orderId: orderId
         });
     },
-    updateOrderRemark(orderId, remark){
+    updateOrderRemark(orderId, remark, ticketTitle){
         return httpService.postForm('/custom/order/updateRemark', {
             orderId,
-            remark
+            remark,
+            invoicetitle: ticketTitle
         });
     }
 };

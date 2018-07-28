@@ -82,7 +82,7 @@
         <div class="ticket-selector" @click="isTicketChecked = !isTicketChecked" v-show="!isBanlanceEnough || isVipChecked">
             <div class="left">
                 <div>需要发票</div>
-                <textarea placeholder="请输入发票抬头及税务登记证号" @click.stop v-model="ticketInfo"></textarea>
+                <textarea placeholder="请输入发票抬头及税务登记证号" style="display: none;" @click.stop v-model="ticketInfo"></textarea>
             </div>
             <div class="right">
                 <div class="checkbox" :class="{active: isTicketChecked}"></div>

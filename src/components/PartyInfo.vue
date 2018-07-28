@@ -36,7 +36,7 @@
         <div class="row">
             <div class="label">聚会类型</div>
             <div class="label-content">
-
+                {{partyType}}
             </div>
         </div>
         <div class="row">
@@ -61,6 +61,11 @@
 </template>
 
 <script>
+    const partyTypeMap = {
+        1: '社交聚会',
+        2: 'AA制聚会',
+        3: '免费聚会'
+    };
     import filter from '../mixins/filter';
     import BgAvatar from "./BgAvatar";
     export default {
@@ -85,6 +90,9 @@
             },
             isFinish(){
                 return +this.data.status === 3;
+            },
+            partyType(){
+                return partyTypeMap[this.data.partyType];
             }
         }
     }
