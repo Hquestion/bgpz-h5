@@ -3,6 +3,10 @@
         <bg-header title="立即预定"></bg-header>
         <order-brief-card :package-info.once="selectPackage" :food-info.once="banquetFoods" :price="allFoodsPrice"></order-brief-card>
         <div class="order-form">
+            <bg-cell :arrow="true"  @click.native.prevent.stop="tableNumPickerVisible = true">
+                <div slot="left">人数</div>
+                <bg-input slot="middle" type="text" placeholder="请选择" reverse="true" v-model="tablePeopleNum" read-only="true"></bg-input>
+            </bg-cell>
             <bg-cell arrow="true" @click.native.prevent.stop="selectTimeVisible = true">
                 <div slot="left">时间</div>
                 <bg-input slot="middle" type="text" :placeholder="orderPreTime" reverse="true" v-model="banquetTime" read-only="true"></bg-input>
@@ -18,10 +22,6 @@
             <bg-cell :arrow="false">
                 <div slot="left">联系人</div>
                 <bg-input slot="middle" type="text" placeholder="请选择" reverse="true" v-model="banquetUserName" read-only="true"></bg-input>
-            </bg-cell>
-            <bg-cell :arrow="true"  @click.native.prevent.stop="tableNumPickerVisible = true">
-                <div slot="left">人数</div>
-                <bg-input slot="middle" type="text" placeholder="请选择" reverse="true" v-model="tablePeopleNum" read-only="true"></bg-input>
             </bg-cell>
             <bg-cell :arrow="false">
                 <div slot="left">场地费用</div>
@@ -96,6 +96,7 @@
     import api from '../api';
     import banquetTimePickerGenerator from '../mixins/banquetTimePickerGenerator';
     import {range} from "../util";
+    import form from '../util/form';
 
     export default {
         name: "PreOrder",
@@ -300,6 +301,15 @@
                 });
             },
             nextStep(){
+                let validationList = [
+                    {method: 'isAfterTime', message: '宴会时间不正确', param: [this.$store.state.banquet.banquetTime]},
+                    {method: 'isNotEmpty', message: '请选择地址', param: [this.$store.state.banquet.banquetAddressInfo]},
+                    {method: 'isNotEmpty', message: '请选择人数桌数', param: [this.$store.state.banquet.tableCount]},
+                    {method: 'isNotEmpty', message: '请选择人数桌数', param: [this.$store.state.banquet.peopleCount]},
+                ];
+                if(!form.validate(validationList)) {
+                    return;
+                }
                 //如果是高级私宴定制，则已经检验过菜品，直接下单
                 if(this.$route.params.scence === 'banquet') {
                     this.doOrder();
