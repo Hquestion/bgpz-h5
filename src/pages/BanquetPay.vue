@@ -25,6 +25,9 @@
                 <div>
                     免<span class="red">一年</span>(每月限4桌，连续12个月)厨师服务费(268元/次)，并且<span class="red">赠送9800元账户余额</span>
                 </div>
+                <div style="margin-top: 5px;" @click.stop>
+                    详情请咨询客服热线<a href="tel:4008-718-181" style="text-decoration: underline;margin-left: 3px;">4008-718-181</a>
+                </div>
             </div>
             <div class="vip-price">
                 <span class="red">13400元/年</span>

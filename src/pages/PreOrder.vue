@@ -3,13 +3,13 @@
         <bg-header title="立即预定"></bg-header>
         <order-brief-card :package-info.once="selectPackage" :food-info.once="banquetFoods" :price="allFoodsPrice"></order-brief-card>
         <div class="order-form">
-            <bg-cell :arrow="true"  @click.native.prevent.stop="tableNumPickerVisible = true">
-                <div slot="left">人数</div>
-                <bg-input slot="middle" type="text" placeholder="请选择" reverse="true" v-model="tablePeopleNum" read-only="true"></bg-input>
-            </bg-cell>
             <bg-cell arrow="true" @click.native.prevent.stop="selectTimeVisible = true">
                 <div slot="left">时间</div>
                 <bg-input slot="middle" type="text" :placeholder="orderPreTime" reverse="true" v-model="banquetTime" read-only="true"></bg-input>
+            </bg-cell>
+            <bg-cell :arrow="true"  @click.native.prevent.stop="tableNumPickerVisible = true">
+                <div slot="left">人数</div>
+                <bg-input slot="middle" type="text" placeholder="请选择" reverse="true" v-model="tablePeopleNum" read-only="true"></bg-input>
             </bg-cell>
             <bg-cell arrow="true" @click.native.prevent.stop="selectAddress">
                 <div slot="left">地点</div>
