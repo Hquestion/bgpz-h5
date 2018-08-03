@@ -114,7 +114,8 @@
                 },
                 toReplaceFood: null,
                 toAddCate: null,
-                cfg: {}
+                cfg: {},
+                isUserVip: false
             };
         },
         computed: {
@@ -122,7 +123,11 @@
                 'banquetFoods'
             ]),
             distToOrder(){
-                return (+this.cfg.minSinglePrice || 0) - +this.banquetFoodsPrice;
+                if(this.isUserVip) {
+                    return (+this.cfg.minVIPSingleFood || 0) - +this.banquetFoodsPrice;
+                }else {
+                    return (+this.cfg.minSinglePrice || 0) - +this.banquetFoodsPrice;
+                }
             }
         },
         methods: {
@@ -175,6 +180,11 @@
                 }, ()=>{
                     this.packageMeta = {};
                 });
+                api.userIsVip().then(res => {
+                    this.isUserVip = (res.data.isvip + '') === '1';
+                }, ()=> {
+                    this.isUserVip = false;
+                });
 
                 api.getPackageActivity().then(res => {
                     if(res.data && res.data.length > 0) {
@@ -188,7 +198,7 @@
                     console.log('当前没有特价活动');
                 });
 
-                api.getCfg(['minSinglePrice']).then(res => {
+                api.getCfg(['minSinglePrice', 'minVIPSingleFood']).then(res => {
                     this.cfg = res.data.list;
                 });
             },
